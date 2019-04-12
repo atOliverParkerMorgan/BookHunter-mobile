@@ -1,4 +1,4 @@
-package vitek.bakalari.Others;
+package oliver.bookhunter.KeywordFragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,9 +8,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import vitek.bakalari.R;
+import oliver.bookhunter.R;
 
-public class OthersFragment extends Fragment {
+public class KeywordFragment extends Fragment {
     private View mDemoView;
     private TextView mDemoTextView;
     @Override

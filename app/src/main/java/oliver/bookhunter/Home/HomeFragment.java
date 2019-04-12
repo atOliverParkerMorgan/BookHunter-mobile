@@ -1,4 +1,4 @@
-package vitek.bakalari.Schedule;
+package oliver.bookhunter.Home;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,9 +8,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import vitek.bakalari.R;
+import oliver.bookhunter.R;
 
-public class ScheduleFragment extends Fragment {
+public class HomeFragment extends Fragment {
     private View mDemoView;
     private TextView mDemoTextView;
     @Override
@@ -18,7 +18,7 @@ public class ScheduleFragment extends Fragment {
                              Bundle savedInstanceState) {
         mDemoView = inflater.inflate(R.layout.fragment_demo_main, container, false);
         mDemoTextView = mDemoView.findViewById(R.id.demoText);
-        mDemoTextView.setText("Rozvrh");
+        mDemoTextView.setText("Doma");
         return mDemoView;
     }
 }

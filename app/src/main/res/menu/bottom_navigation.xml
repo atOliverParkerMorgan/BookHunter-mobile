@@ -2,29 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_ukoly"
-        android:icon="@drawable/ic_ukoly_black_24dp"
-        android:title="@string/title_úkoly"/>
+        android:id="@+id/navigation_website"
+        android:icon="@drawable/ic_web_black_24dp"
+        android:title="@string/website_bottomnav"/>
 
     <item
-        android:id="@+id/navigation_znamky"
-        android:icon="@drawable/ic_znamka_black_24dp"
-        android:title="@string/title_známky"/>
-
-    <item
-        android:id="@+id/navigation_domu"
+        android:id="@+id/navigation_home"
         android:icon="@drawable/ic_home_black_24dp"
-        android:title="@string/title_home"/>
-
-
-    <item
-        android:id="@+id/navigation_rozvrh"
-        android:icon="@drawable/ic_rozvrh_black_24dp"
-        android:title="@string/title_rozvrh"/>
+        android:title="@string/home_bottomnav"/>
 
     <item
-        android:id="@+id/navigation_dalsi"
-        android:icon="@drawable/ic_ostatni_black_24dp"
-        android:title="@string/title_ostatní"/>
+        android:id="@+id/navigation_keywords"
+        android:icon="@drawable/ic_format_color_text_black_24dp"
+        android:title="@string/keyword_bottomnav"/>
 
 </menu>
