@@ -5,4 +5,6 @@
     <string name="keyword_bottomnav">Keywords</string>
     <string name="change_account">Change Account</string>
     <string name="about_app">About</string>
+    <string name="hunt_button">Hunt</string>
+    <string name="test">Test</string>
 </resources>

@@ -16,9 +16,9 @@ public class KeywordFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mDemoView = inflater.inflate(R.layout.fragment_demo_main, container, false);
-        mDemoTextView = mDemoView.findViewById(R.id.demoText);
-        mDemoTextView.setText("Ostatní");
+        mDemoView = inflater.inflate(R.layout.fragment_keyword, container, false);
+
+
         return mDemoView;
     }
 }

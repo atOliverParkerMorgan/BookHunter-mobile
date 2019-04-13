@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private int mAccountCount;
 
 
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -49,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
                     mFragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                     mFragmentTransaction.replace(mFragmentContainer, mSelectedFragment);
                     mFragmentTransaction.commit();
+
+
                     return true;
                 case R.id.navigation_home:
                     mFragmentTransaction = mFragmentManager.beginTransaction();
@@ -74,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
 
+
         setContentView(R.layout.activity_main);
 
         mFragmentContainer = R.id.fragment_container;
@@ -88,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
         mFragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
         mFragmentTransaction.replace(mFragmentContainer, mSelectedFragment);
         mFragmentTransaction.commit();
+
+
 
     }
 
