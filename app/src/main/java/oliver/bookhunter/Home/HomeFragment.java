@@ -42,16 +42,33 @@ public class HomeFragment extends Fragment {
                     public void run() {
                         Document doc;
                         try {
-                            doc = Jsoup.connect("http://www.morganbooks.eu/").timeout(60 * 10000).get();
 
-                            //String title = doc.title();
-                            String link = doc.toString().replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", " ");
-
+                            doc = Jsoup.connect("http://www.morganbooks.eu/1940-1947").timeout(60 * 10000).get();
+                            String webpagecontent = doc.toString();
 
 
+                            int index = webpagecontent.lastIndexOf("<style>");
+                            int index2 = webpagecontent.lastIndexOf("</style>");
+                            int index3 = webpagecontent.lastIndexOf("<script>");
+                            int index4 = webpagecontent.lastIndexOf("</script>");
+                            if(index==-1   || index2==-1) {
+                                Log.d("Error:","no css on webpage");
+                            }else {
+                                webpagecontent = webpagecontent.substring(0, index) + webpagecontent.substring(index2);
+                            }
+                            if(index3==-1   || index4==-1) {
+                               Log.d("Error:","no javasrcript on webpage");
+                            }else {
+                                index3 = webpagecontent.lastIndexOf("<script>");
+                                index4 = webpagecontent.lastIndexOf("</script>");
+                               webpagecontent = webpagecontent.substring(0, index3) + webpagecontent.substring(index4);
+                            }
+                            webpagecontent = webpagecontent.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", " ");
+
+ 
 
 
-                            Log.d("link",link);
+                            Log.d("link",webpagecontent);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
