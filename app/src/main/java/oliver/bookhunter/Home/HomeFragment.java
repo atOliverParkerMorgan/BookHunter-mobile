@@ -1,6 +1,12 @@
 package oliver.bookhunter.Home;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -23,6 +29,11 @@ public class HomeFragment extends Fragment {
     private Button mHunt;
     private TextView textView;
     private Document document;
+    private final String file_name = "bookhunter_file";
+    private String[] allwebsites;
+    public HomeFragment() {
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -41,38 +52,55 @@ public class HomeFragment extends Fragment {
                 Thread downloadThread = new Thread() {
                     public void run() {
                         Document doc;
+
                         try {
-
-                            doc = Jsoup.connect("http://www.morganbooks.eu/1940-1947").timeout(60 * 10000).get();
-                            String webpagecontent = doc.toString();
-
-
-                            int index = webpagecontent.lastIndexOf("<style>");
-                            int index2 = webpagecontent.lastIndexOf("</style>");
-                            int index3 = webpagecontent.lastIndexOf("<script>");
-                            int index4 = webpagecontent.lastIndexOf("</script>");
-                            if(index==-1   || index2==-1) {
-                                Log.d("Error:","no css on webpage");
-                            }else {
-                                webpagecontent = webpagecontent.substring(0, index) + webpagecontent.substring(index2);
+                            String Message;
+                            FileInputStream fileinput = getContext().openFileInput(file_name);
+                            InputStreamReader inputStreamReader = new InputStreamReader(fileinput);
+                            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                            StringBuffer stringBuffer = new StringBuffer();
+                            while (((Message = bufferedReader.readLine()) != null)) {
+                                stringBuffer.append(Message + "\n");
                             }
-                            if(index3==-1   || index4==-1) {
-                               Log.d("Error:","no javasrcript on webpage");
-                            }else {
-                                index3 = webpagecontent.lastIndexOf("<script>");
-                                index4 = webpagecontent.lastIndexOf("</script>");
-                               webpagecontent = webpagecontent.substring(0, index3) + webpagecontent.substring(index4);
+                            final BufferedReader bufReader = new BufferedReader(new StringReader(stringBuffer.toString()));
+                            String line = null;
+
+                            while ((line = bufReader.readLine()) != null) {
+                                doc = Jsoup.connect(line).timeout(60 * 10000).get();
+                                String webpagecontent = doc.toString();
+
+
+                                int index = webpagecontent.lastIndexOf("<style>");
+                                int index2 = webpagecontent.lastIndexOf("</style>");
+                                int index3 = webpagecontent.lastIndexOf("<script>");
+                                int index4 = webpagecontent.lastIndexOf("</script>");
+                                if (index == -1 || index2 == -1) {
+                                    Log.d("Error:", "no css on webpage");
+                                } else {
+                                    webpagecontent = webpagecontent.substring(0, index) + webpagecontent.substring(index2);
+                                }
+                                if (index3 == -1 || index4 == -1) {
+                                    Log.d("Error:", "no javasrcript on webpage");
+                                } else {
+                                    index3 = webpagecontent.lastIndexOf("<script>");
+                                    index4 = webpagecontent.lastIndexOf("</script>");
+                                    webpagecontent = webpagecontent.substring(0, index3) + webpagecontent.substring(index4);
+                                }
+                                webpagecontent = webpagecontent.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", " ");
+
+
+                                Log.d("link", webpagecontent);
+
                             }
-                            webpagecontent = webpagecontent.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", " ");
-
- 
-
-
-                            Log.d("link",webpagecontent);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+
+
                     }
+
                 };
                 downloadThread.start();
             }

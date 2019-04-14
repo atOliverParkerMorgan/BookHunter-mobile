@@ -7,4 +7,6 @@
     <string name="about_app">About</string>
     <string name="hunt_button">Hunt</string>
     <string name="test">Test</string>
+    <string name="hint_website">add website</string>
+    <string name="Website_title">Websites</string>
 </resources>

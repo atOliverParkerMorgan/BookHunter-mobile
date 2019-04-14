@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_keywords:
                     mFragmentTransaction = mFragmentManager.beginTransaction();
-                    mSelectedFragment = new WebsiteFragment();
+                    mSelectedFragment = new KeywordFragment();
                     mFragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                     mFragmentTransaction.replace(mFragmentContainer, mSelectedFragment);
                     mFragmentTransaction.commit();
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 case R.id.navigation_website:
                     mFragmentTransaction = mFragmentManager.beginTransaction();
-                    mSelectedFragment = new KeywordFragment();
+                    mSelectedFragment = new WebsiteFragment();
                     mFragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                     mFragmentTransaction.replace(mFragmentContainer, mSelectedFragment);
                     mFragmentTransaction.commit();
