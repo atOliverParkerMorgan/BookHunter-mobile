@@ -60,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
                     mFragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                     mFragmentTransaction.replace(mFragmentContainer, mSelectedFragment);
                     mFragmentTransaction.commit();
+
+
                     return true;
                 case R.id.navigation_website:
                     mFragmentTransaction = mFragmentManager.beginTransaction();

@@ -30,7 +30,7 @@ public class HomeFragment extends Fragment {
     private TextView textView;
     private Document document;
     private final String file_name = "bookhunter_file";
-    private String[] allwebsites;
+    private String url;
     public HomeFragment() {
     }
 
@@ -44,7 +44,7 @@ public class HomeFragment extends Fragment {
         mHunt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url ="http://www.morganbooks.eu/";
+        url ="http://www.morganbooks.eu/";
 
 
 
@@ -66,7 +66,7 @@ public class HomeFragment extends Fragment {
                             String line = null;
 
                             while ((line = bufReader.readLine()) != null) {
-                                doc = Jsoup.connect(line).timeout(60 * 10000).get();
+                                doc = Jsoup.connect(url).timeout(60 * 10000).get();
                                 String webpagecontent = doc.toString();
 
 

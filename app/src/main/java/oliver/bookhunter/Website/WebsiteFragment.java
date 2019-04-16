@@ -1,7 +1,10 @@
 package oliver.bookhunter.Website;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +15,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,11 +28,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import oliver.bookhunter.Home.HomeFragment;
 import oliver.bookhunter.R;
+
+import static org.jsoup.Jsoup.*;
 
 public class WebsiteFragment extends Fragment {
     // the fragment view
@@ -47,9 +64,42 @@ public class WebsiteFragment extends Fragment {
 
     //index for for loop
     private int index;
+
+    boolean isawebsite;
+
+
+
+
+    static public boolean isServerReachable(Context context,String url) {
+        ConnectivityManager connMan = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = connMan.getActiveNetworkInfo();
+        if (netInfo != null && netInfo.isConnected()) {
+            try {
+                URL urlServer = new URL(url);
+
+                HttpURLConnection urlConn = (HttpURLConnection) urlServer.openConnection();
+                urlConn.setConnectTimeout(3000);
+                urlConn.connect();
+                return urlConn.getResponseCode() == 200;
+            } catch (MalformedURLException e1) {
+                return false;
+            } catch (IOException e) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
+
+
+
+
         //get main view
         mDemoView = inflater.inflate(R.layout.fragment_website, container, false);
 
@@ -63,6 +113,9 @@ public class WebsiteFragment extends Fragment {
         Alldeletebuttons = new ArrayList<Button>();
         Allwebsitetext = new ArrayList<TextView>();
         index = 0;
+
+
+
 
         try {
             // GETTING stings out of file
@@ -171,97 +224,62 @@ public class WebsiteFragment extends Fragment {
         mSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final TextView textView = new TextView(getActivity());
                 website = mWebsite_text.getText().toString();
-                website+='\n';
-                try{
-                    FileOutputStream fileoutput = getContext().openFileOutput(file_name,Context.MODE_APPEND);
-                    fileoutput.write(website.getBytes());
-                    fileoutput.close();
-                    final TextView textView = new TextView(getActivity());
-                    index++;
-                    Integer intInstance = new Integer(index);
-
-                    textView.setText(" "+intInstance.toString()+")  "+website);
-
-
-                    final Button command = new Button(getActivity());
-                    command.setId(Integer.parseInt(String.valueOf(Allwebsitetext.size())));
-                    command.setText("delete");
-
-                    //command.setBackgroundResource(R.drawable.costum_button);
-                    command.setTextColor(Color.WHITE);
-                    command.setTextSize(14);
-                    Alldeletebuttons.add(command);
-                    Allwebsitetext.add(textView);
-
-
-
-                    command.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View view) {
-
-
-                            int id = command.getId();
-
-
-
-                            TextView delete = Allwebsitetext.get(id);
-                            Button delete2 = Alldeletebuttons.get(id);
-                            linearLayout.removeView(delete2);
-                            linearLayout.removeView(delete);
-                            try {
-
-
-                                //get file content
-                                String Message;
-                                final FileInputStream fileinput = getContext().openFileInput(file_name);
-                                InputStreamReader inputStreamReader = new InputStreamReader(fileinput);
-                                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                                StringBuffer stringBuffer = new StringBuffer();
-                                while (((Message = bufferedReader.readLine()) != null)) {
-                                    stringBuffer.append(Message + "\n");
-
-                                }
-                                final BufferedReader bufReader = new BufferedReader(new StringReader(stringBuffer.toString()));
-                                String line = null;
-                                FileOutputStream fileoutput = getContext().openFileOutput(file_name, Context.MODE_PRIVATE);
-                                while ((line = bufReader.readLine()) != null) {
-                                    Log.d("xxxtext",line);
-
-                                    Log.d("getText",delete.getText().toString().substring(5));
-                                    Log.d("False",Boolean.toString(line.equals(delete.getText().toString().substring(5))));
-
-                                    if(line.equals(delete.getText().toString().substring(5))) {
-                                        Log.d("True","true");
-                                    }else {
-                                        line += '\n';
-                                        fileoutput.write(line.getBytes());
-                                    }
 
 
 
 
-                                }
-                                fileoutput.close();
+                Thread downloadThread = new Thread() {
+                    public void run() {
+
+                isawebsite = isServerReachable(getActivity(),website);
 
 
-                            } catch (FileNotFoundException e) {
-                                e.printStackTrace();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
+                    }
 
-                    linearLayout.addView(textView);
-                    linearLayout.addView(command);
+                };
+                downloadThread.start();
 
 
 
-                } catch (FileNotFoundException e1) {
-                    e1.printStackTrace();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
+
+
+
+                try { Thread.sleep(3000); }
+                catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+                Log.d("ERORR", Boolean.toString(isawebsite));
+                if(!isawebsite){
+                    Toast.makeText(getActivity(), "Error not a website / not connected", Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(getActivity(), "Saved", Toast.LENGTH_LONG).show();
+                    Allwebsitetext.add(textView);
+                    linearLayout.addView(textView);
+                    try {
+                        FileOutputStream fileoutput = getContext().openFileOutput(file_name, Context.MODE_APPEND);
+                        website+='\n';
+                        fileoutput.write(website.getBytes());
+                        fileoutput.close();
+
+                        // Reload current fragment
+
+                        Integer intInstance = new Integer(Allwebsitetext.size() + 1);
+                        textView.setText(" " + intInstance.toString() + ")  " + website);
+
+
+
+                    } catch (FileNotFoundException e1) {
+                        e1.printStackTrace();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+                website += '\n';
+
+
+
 
 
 
