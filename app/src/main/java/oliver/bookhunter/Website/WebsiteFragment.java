@@ -1,8 +1,6 @@
 package oliver.bookhunter.Website;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -16,11 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -29,18 +22,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
-import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import oliver.bookhunter.Home.HomeFragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import oliver.bookhunter.R;
-
-import static org.jsoup.Jsoup.*;
 
 public class WebsiteFragment extends Fragment {
     // the fragment view
@@ -64,12 +56,15 @@ public class WebsiteFragment extends Fragment {
 
     //index for for loop
     private int index;
-
+    //check if a website exist
     boolean isawebsite;
 
+    //all website
+    private List<ItemData> itemsData ;
+    //Recycle View
 
 
-
+    // method if a website exist
     static public boolean isServerReachable(Context context,String url) {
         ConnectivityManager connMan = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = connMan.getActiveNetworkInfo();
@@ -91,6 +86,8 @@ public class WebsiteFragment extends Fragment {
     }
 
 
+
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -107,15 +104,18 @@ public class WebsiteFragment extends Fragment {
         //input text
         mWebsite_text = (EditText) mDemoView.findViewById(R.id.website_new);
         //linearLayout were the website text is displayed
-        linearLayout = (LinearLayout) mDemoView.findViewById(R.id.LinearLayout01);
+
 
         //Arrays
         Alldeletebuttons = new ArrayList<Button>();
         Allwebsitetext = new ArrayList<TextView>();
+
         index = 0;
+        // 1. get a reference to recyclerView
+        final RecyclerView recyclerView = (RecyclerView) mDemoView.findViewById(R.id.RecyclerView01);
 
-
-
+        // this is data fro recycler view
+        itemsData = new ArrayList<ItemData>();
 
         try {
             // GETTING stings out of file
@@ -130,88 +130,12 @@ public class WebsiteFragment extends Fragment {
             }
             final BufferedReader bufReader = new BufferedReader(new StringReader(stringBuffer.toString()));
             String line = null;
-
-            while( (line=bufReader.readLine()) != null )
-            {
-
-
-
-                final Button command = new Button(getActivity());
-
-                command.setId(Integer.parseInt(String.valueOf(index)));
-                command.setText("delete");
-
-                //command.setBackgroundResource(R.drawable.costum_button);
-                command.setTextColor(Color.WHITE);
-                command.setTextSize(14);
+            int index = 0;
+            while( (line=bufReader.readLine()) != null ) {
+                itemsData.add(new ItemData(line, R.drawable.ic_delete_black_24dp));
 
                 index++;
-                final TextView textView = new TextView(getActivity());
-                Integer intInstance = new Integer(index);
-                textView.setText(" "+intInstance.toString()+")  "+line);
-
-                Alldeletebuttons.add(command);
-                Allwebsitetext.add(textView);
-
-
-
-                command.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View view) {
-                        int id = command.getId();
-                        TextView delete = Allwebsitetext.get(id);
-                        Button delete2 = Alldeletebuttons.get(id);
-                        linearLayout.removeView(delete2);
-                        linearLayout.removeView(delete);
-                        try {
-
-
-                            //get file content
-                            String Message;
-                            final FileInputStream fileinput = getContext().openFileInput(file_name);
-                            InputStreamReader inputStreamReader = new InputStreamReader(fileinput);
-                            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                            StringBuffer stringBuffer = new StringBuffer();
-                            while (((Message = bufferedReader.readLine()) != null)) {
-                                stringBuffer.append(Message + "\n");
-
-                            }
-                            final BufferedReader bufReader = new BufferedReader(new StringReader(stringBuffer.toString()));
-                            String line = null;
-                            FileOutputStream fileoutput = getContext().openFileOutput(file_name, Context.MODE_PRIVATE);
-                            while ((line = bufReader.readLine()) != null) {
-                                    Log.d("xxxtext",line);
-
-                                    Log.d("getText",delete.getText().toString().substring(5));
-                                    Log.d("False",Boolean.toString(line.equals(delete.getText().toString().substring(5))));
-
-                                if(line.equals(delete.getText().toString().substring(5))) {
-                                    Log.d("True","true");
-                                }else {
-                                    line += '\n';
-                                    fileoutput.write(line.getBytes());
-                                }
-
-
-
-
-                            }
-                            fileoutput.close();
-
-
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-
-                linearLayout.addView(textView);
-                linearLayout.addView(command);
-
-
             }
-
 
 
         } catch (FileNotFoundException e) {
@@ -219,21 +143,32 @@ public class WebsiteFragment extends Fragment {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        // 2. set layoutManger
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        // 3. create an adapter
+        final MyAdapter mAdapter = new MyAdapter(itemsData,getActivity());
+        // 4. set adapter
+        recyclerView.setAdapter(mAdapter);
+        // 5. set item animator to DefaultAnimator
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+
+
+
 
 
         mSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final TextView textView = new TextView(getActivity());
                 website = mWebsite_text.getText().toString();
 
+                Log.d("Website",website);
 
 
-
-                Thread downloadThread = new Thread() {
+               Thread downloadThread = new Thread() {
                     public void run() {
 
-                isawebsite = isServerReachable(getActivity(),website);
+                isawebsite = isServerReachable(getContext(),website);
 
 
                     }
@@ -242,21 +177,21 @@ public class WebsiteFragment extends Fragment {
                 downloadThread.start();
 
 
-
-
-
-
-                try { Thread.sleep(3000); }
-                catch (InterruptedException e) {
+                try {
+                    downloadThread.join();
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+
                 Log.d("ERORR", Boolean.toString(isawebsite));
                 if(!isawebsite){
                     Toast.makeText(getActivity(), "Error not a website / not connected", Toast.LENGTH_LONG).show();
                 }else{
+
+                    itemsData.add(new ItemData(website, R.drawable.ic_delete_black_24dp));
+                    mAdapter.notifyDataSetChanged();
                     Toast.makeText(getActivity(), "Saved", Toast.LENGTH_LONG).show();
-                    Allwebsitetext.add(textView);
-                    linearLayout.addView(textView);
+
                     try {
                         FileOutputStream fileoutput = getContext().openFileOutput(file_name, Context.MODE_APPEND);
                         website+='\n';
@@ -266,7 +201,7 @@ public class WebsiteFragment extends Fragment {
                         // Reload current fragment
 
                         Integer intInstance = new Integer(Allwebsitetext.size() + 1);
-                        textView.setText(" " + intInstance.toString() + ")  " + website);
+
 
 
 
@@ -276,7 +211,7 @@ public class WebsiteFragment extends Fragment {
                         e1.printStackTrace();
                     }
                 }
-                website += '\n';
+
 
 
 
