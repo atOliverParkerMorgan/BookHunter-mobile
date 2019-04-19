@@ -1,4 +1,4 @@
-package oliver.bookhunter.Website;
+package oliver.bookhunter.KeywordFragment;
 
 import android.content.Context;
 import android.util.Log;
@@ -21,13 +21,13 @@ import java.util.List;
 
 import oliver.bookhunter.R;
 
-public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
-    private List<ItemData> itemsData;
+public class MyAdapter2 extends RecyclerView.Adapter<MyAdapter2.ViewHolder> {
+    private List<ItemData2> itemsData;
     public static Context context;
 
 
 
-    public MyAdapter(List<ItemData> itemsData, Context context) {
+    public MyAdapter2(List<ItemData2> itemsData, Context context) {
         this.itemsData = itemsData;
         this.context = context;
     }
@@ -36,8 +36,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
 
     @Override
-    public MyAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                   int viewType) {
+    public MyAdapter2.ViewHolder onCreateViewHolder(ViewGroup parent,
+                                                    int viewType) {
         // create a new view
         View itemLayoutView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.webistetextview, null);
@@ -103,7 +103,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         return itemsData.size();
     }
     public void delete(String delete){
-        String file_name = "bookhunter_file";
+        String file_name = "bookhunter_file2";
         this.notifyDataSetChanged();
 
         try {
@@ -120,8 +120,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             String line = null;
             FileOutputStream fileoutput = context.openFileOutput(file_name, Context.MODE_PRIVATE);
             while ((line = bufReader.readLine()) != null) {
-                Log.d("text", line);
-                Log.d("dele",delete);
 
 
                 if (line.equals(delete)) {

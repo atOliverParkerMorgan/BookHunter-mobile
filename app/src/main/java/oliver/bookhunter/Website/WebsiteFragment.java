@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +12,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -27,11 +32,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import oliver.bookhunter.R;
 
 public class WebsiteFragment extends Fragment {
@@ -49,15 +49,9 @@ public class WebsiteFragment extends Fragment {
     private final String file_name = "bookhunter_file";
     // the linear layout where the websites are shown
     private LinearLayout linearLayout;
-    //list with all the buttons
-    private List<Button> Alldeletebuttons;
-    //list with all the text veiws
-    private List<TextView> Allwebsitetext;
 
-    //index for for loop
-    private int index;
     //check if a website exist
-    boolean isawebsite;
+    private boolean isawebsite;
 
     //all website
     private List<ItemData> itemsData ;
@@ -107,10 +101,7 @@ public class WebsiteFragment extends Fragment {
 
 
         //Arrays
-        Alldeletebuttons = new ArrayList<Button>();
-        Allwebsitetext = new ArrayList<TextView>();
 
-        index = 0;
         // 1. get a reference to recyclerView
         final RecyclerView recyclerView = (RecyclerView) mDemoView.findViewById(R.id.RecyclerView01);
 
@@ -118,6 +109,7 @@ public class WebsiteFragment extends Fragment {
         itemsData = new ArrayList<ItemData>();
 
         try {
+
             // GETTING stings out of file
             String Message;
             final FileInputStream fileinput = getContext().openFileInput(file_name);
@@ -162,7 +154,7 @@ public class WebsiteFragment extends Fragment {
             public void onClick(View v) {
                 website = mWebsite_text.getText().toString();
 
-                Log.d("Website",website);
+
 
 
                Thread downloadThread = new Thread() {
@@ -183,7 +175,6 @@ public class WebsiteFragment extends Fragment {
                     e.printStackTrace();
                 }
 
-                Log.d("ERORR", Boolean.toString(isawebsite));
                 if(!isawebsite){
                     Toast.makeText(getActivity(), "Error not a website / not connected", Toast.LENGTH_LONG).show();
                 }else{
@@ -197,12 +188,6 @@ public class WebsiteFragment extends Fragment {
                         website+='\n';
                         fileoutput.write(website.getBytes());
                         fileoutput.close();
-
-                        // Reload current fragment
-
-                        Integer intInstance = new Integer(Allwebsitetext.size() + 1);
-
-
 
 
                     } catch (FileNotFoundException e1) {
