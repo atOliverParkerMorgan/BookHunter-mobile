@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -62,6 +63,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                // ListsDatabaseList theRemovedItem = itemsData.get(position);
                 // remove your item from data base
                 Log.d("Index",Integer.toString(position));
+                Toast.makeText(context,"removed",Toast.LENGTH_SHORT).show();
                 delete(itemsData.get(position).getTitle());
                 itemsData.remove(position);  // remove the item from list
                 notifyItemRemoved(position); // notify the adapter about the removed item

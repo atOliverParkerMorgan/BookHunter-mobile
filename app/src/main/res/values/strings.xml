@@ -13,6 +13,6 @@
     <string name="Keyword_title">Keywords</string>
     <string name="Submit">Submit</string>
     <string name="Finds_title">Finds</string>
-
+    <string name="time_text">look for books every:</string>
 
 </resources>
