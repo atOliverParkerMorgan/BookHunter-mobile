@@ -63,7 +63,9 @@ public class HomeFragment extends Fragment {
 
     private PendingIntent pendingIntent;
     private AlarmManager manager;
-    private Calendar cal_alarm;
+
+
+
 
     public void addtofile (int num){
         try {
@@ -84,6 +86,7 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         mDemoView = inflater.inflate(R.layout.fragment_home, container, false);
+
 
         Spinner spinner = (Spinner) mDemoView.findViewById(R.id.time_spinner);
         // Create an ArrayAdapter using the string array and a default spinner layout
@@ -136,42 +139,43 @@ public class HomeFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String element = (String) parent.getItemAtPosition(position);
                 // An item was selected. You can retrieve the selected item using
-                if (element.equals("never")) {
-                    addtofile(0);
-                    setAlarm(999999999);
-                }
-                else if (element.equals("5 min")) {
-                    addtofile(1);
-                    Toast.makeText(getActivity(),"hunting every 5 min",Toast.LENGTH_LONG).show();
-                    setAlarm(60000);
-                } else if (element.equals("15 min")) {
-                    addtofile(2);
-                    Toast.makeText(getActivity(),"hunting every 15 min",Toast.LENGTH_LONG).show();
-                    setAlarm(900000);
-                } else if (element.equals("30 min")) {
-                    addtofile(3);
-                    Toast.makeText(getActivity(),"hunting every 30 min",Toast.LENGTH_LONG).show();
-                    setAlarm(1800000);
-                } else if (element.equals("1 h")) {
-                    addtofile(4);
-                    Toast.makeText(getActivity(),"hunting every 1 h",Toast.LENGTH_LONG).show();
-                    setAlarm(3600000);
-                } else if (element.equals("3 h")) {
-                    addtofile(5);
-                    Toast.makeText(getActivity(),"hunting every 3 h",Toast.LENGTH_LONG).show();
-                    setAlarm(10800000);
-                } else if (element.equals("6 h")) {
-                    addtofile(6);
-                    Toast.makeText(getActivity(),"hunting every 6 h",Toast.LENGTH_LONG).show();
-                    setAlarm(21600000);
-                } else if (element.equals("24 h")) {
-                    addtofile(7);
-                    Toast.makeText(getActivity(),"hunting every 24 h",Toast.LENGTH_LONG).show();
-                    setAlarm(86400000);
-                } else if (element.equals("48 h")) {
+                if (element.equals("5 min")) {
                     addtofile(8);
-                    Toast.makeText(getActivity(),"hunting every 48 h",Toast.LENGTH_LONG).show();
-                    setAlarm(172800000);
+                    Toast.makeText(getActivity(),"hunting every 5 min",Toast.LENGTH_LONG).show();
+                    setAlarm(300);
+                }
+                else if (element.equals("15 min")) {
+                    addtofile(7);
+                    Toast.makeText(getActivity(),"hunting every 15 min",Toast.LENGTH_LONG).show();
+                    setAlarm(900);
+                } else if (element.equals("30 min")) {
+                    addtofile(6);
+                    Toast.makeText(getActivity(),"hunting every 30 min",Toast.LENGTH_LONG).show();
+                    setAlarm(1800);
+                } else if (element.equals("1 h")) {
+                    addtofile(5);
+                    Toast.makeText(getActivity(),"hunting every 1 h",Toast.LENGTH_LONG).show();
+                    setAlarm(3600);
+                } else if (element.equals("3 h")) {
+                    addtofile(4);
+                    Toast.makeText(getActivity(),"hunting every 3 h",Toast.LENGTH_LONG).show();
+                    setAlarm(10800);
+                } else if (element.equals("6 h")) {
+                    addtofile(3);
+                    Toast.makeText(getActivity(),"hunting every 6 h",Toast.LENGTH_LONG).show();
+                    setAlarm(21600);
+                } else if (element.equals("1 day")) {
+                    addtofile(2);
+                    Toast.makeText(getActivity(),"hunting every 1 day",Toast.LENGTH_LONG).show();
+                    setAlarm(86400);
+                } else if (element.equals("1 week")) {
+                    addtofile(1);
+                    Toast.makeText(getActivity(),"hunting every 1 week",Toast.LENGTH_LONG).show();
+                    setAlarm(604800);
+                } else if (element.equals("1 month")) {
+                    addtofile(0);
+                    Toast.makeText(getActivity(),"hunting every 1 month",Toast.LENGTH_LONG).show();
+                    setAlarm(2629746);
                 }
 
 
@@ -398,22 +402,21 @@ public class HomeFragment extends Fragment {
 
 
     public void setAlarm(int interval){
-
         Date dat = new Date();
         Calendar cal_alarm = Calendar.getInstance();
-
         cal_alarm.setTime(dat);
-        //cal_alarm.set(Calendar.HOUR_OF_DAY, 10);
-        //cal_alarm.set(Calendar.MINUTE, 43);
-        //cal_alarm.set(Calendar.SECOND, 0);
+
         // Retrieve a PendingIntent that will perform a broadcast
         Intent alarmIntent = new Intent(getActivity(), AlarmReceiver.class);
-        pendingIntent = (PendingIntent) pendingIntent.getBroadcast(getActivity(),
+        pendingIntent = (PendingIntent) PendingIntent.getBroadcast(getActivity(),
                 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        if(interval>-1) {
-            manager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-            manager.setRepeating(AlarmManager.RTC_WAKEUP, cal_alarm.getTimeInMillis(), interval, pendingIntent);
-        }
+        manager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+        manager.setRepeating(AlarmManager.RTC_WAKEUP, cal_alarm.getTimeInMillis()+interval*1000, interval * 1000, pendingIntent);
+
+
+
+
+
 
     }
 
