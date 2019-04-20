@@ -95,7 +95,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
 
         // setting alarm
-        Toast.makeText(arg0, "Going off", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(arg0, "Going off", Toast.LENGTH_SHORT).show();
         Thread downloadThread = new Thread() {
 
             public void run() {

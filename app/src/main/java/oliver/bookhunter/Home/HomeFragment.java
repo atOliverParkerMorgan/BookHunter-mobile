@@ -140,42 +140,38 @@ public class HomeFragment extends Fragment {
                 String element = (String) parent.getItemAtPosition(position);
                 // An item was selected. You can retrieve the selected item using
                 if (element.equals("5 min")) {
-                    addtofile(8);
-                    Toast.makeText(getActivity(),"hunting every 5 min",Toast.LENGTH_LONG).show();
+                    addtofile(7);
+
                     setAlarm(300);
                 }
                 else if (element.equals("15 min")) {
-                    addtofile(7);
-                    Toast.makeText(getActivity(),"hunting every 15 min",Toast.LENGTH_LONG).show();
+                    addtofile(6);
+
                     setAlarm(900);
                 } else if (element.equals("30 min")) {
-                    addtofile(6);
-                    Toast.makeText(getActivity(),"hunting every 30 min",Toast.LENGTH_LONG).show();
+                    addtofile(5);
+
                     setAlarm(1800);
                 } else if (element.equals("1 h")) {
-                    addtofile(5);
-                    Toast.makeText(getActivity(),"hunting every 1 h",Toast.LENGTH_LONG).show();
+                    addtofile(4);
+
                     setAlarm(3600);
                 } else if (element.equals("3 h")) {
-                    addtofile(4);
-                    Toast.makeText(getActivity(),"hunting every 3 h",Toast.LENGTH_LONG).show();
+                    addtofile(3);
+
                     setAlarm(10800);
                 } else if (element.equals("6 h")) {
-                    addtofile(3);
-                    Toast.makeText(getActivity(),"hunting every 6 h",Toast.LENGTH_LONG).show();
+                    addtofile(2);
+
                     setAlarm(21600);
                 } else if (element.equals("1 day")) {
-                    addtofile(2);
-                    Toast.makeText(getActivity(),"hunting every 1 day",Toast.LENGTH_LONG).show();
+                    addtofile(1);
+
                     setAlarm(86400);
                 } else if (element.equals("1 week")) {
-                    addtofile(1);
-                    Toast.makeText(getActivity(),"hunting every 1 week",Toast.LENGTH_LONG).show();
-                    setAlarm(604800);
-                } else if (element.equals("1 month")) {
                     addtofile(0);
-                    Toast.makeText(getActivity(),"hunting every 1 month",Toast.LENGTH_LONG).show();
-                    setAlarm(2629746);
+
+                    setAlarm(604800);
                 }
 
 
