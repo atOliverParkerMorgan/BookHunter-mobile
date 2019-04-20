@@ -14,5 +14,6 @@
     <string name="Submit">Submit</string>
     <string name="Finds_title">Finds</string>
     <string name="time_text">look for books every:</string>
+    <string name="http">http://</string>
 
 </resources>

@@ -148,12 +148,12 @@ public class WebsiteFragment extends Fragment {
 
 
 
-
+        mWebsite_text.setText("http://");
         mSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 website = mWebsite_text.getText().toString();
-
+                mWebsite_text.setText("http://");
 
 
 

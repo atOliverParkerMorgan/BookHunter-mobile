@@ -38,24 +38,24 @@ public class FindsActivity extends AppCompatActivity {
         itemsData = new ArrayList<Database>();
 
         try {
-            // GETTING stings out of file
-            String Message;
-            final FileInputStream fileinput = openFileInput(file_name4);
-            InputStreamReader inputStreamReader = new InputStreamReader(fileinput);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            StringBuffer stringBuffer = new StringBuffer();
-            while (((Message=bufferedReader.readLine())!=null)){
-                stringBuffer.append(Message+"\n");
+                // GETTING stings out of file
+                String Message;
+                final FileInputStream fileinput = openFileInput(file_name4);
+                InputStreamReader inputStreamReader = new InputStreamReader(fileinput);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                StringBuffer stringBuffer = new StringBuffer();
+                while (((Message=bufferedReader.readLine())!=null)){
+                    stringBuffer.append(Message+"\n");
 
-            }
-            final BufferedReader bufReader = new BufferedReader(new StringReader(stringBuffer.toString()));
-            String line = null;
+                }
+                final BufferedReader bufReader = new BufferedReader(new StringReader(stringBuffer.toString()));
+                String line = null;
 
-            while( (line=bufReader.readLine()) != null ) {
-                itemsData.add(new Database(line, R.drawable.ic_search_black_24dp));
+                while( (line=bufReader.readLine()) != null ) {
+                    itemsData.add(new Database(line, R.drawable.ic_search_black_24dp));
 
 
-            }
+                }
 
 
         } catch (FileNotFoundException e) {

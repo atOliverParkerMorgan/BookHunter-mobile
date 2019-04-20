@@ -39,8 +39,58 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context arg0, Intent arg1) {
         Random rand = new Random();
+        try {
+            String Message;
+            final FileInputStream fileinput = arg0.openFileInput(file_name);
+            InputStreamReader inputStreamReader = new InputStreamReader(fileinput);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            StringBuffer stringBuffer = new StringBuffer();
+            while (((Message = bufferedReader.readLine()) != null)) {
+                stringBuffer.append(Message + "\n");
 
-    // Obtain a number between [0 - 49].
+            }
+            final BufferedReader bufReader = new BufferedReader(new StringReader(stringBuffer.toString()));
+            String line = null;
+
+            while ((line = bufReader.readLine()) != null) {
+
+                url.add(line);
+
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            String Message;
+            final FileInputStream fileinput = arg0.openFileInput(file_name2);
+            InputStreamReader inputStreamReader = new InputStreamReader(fileinput);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            StringBuffer stringBuffer = new StringBuffer();
+            while (((Message = bufferedReader.readLine()) != null)) {
+                stringBuffer.append(Message + "\n");
+
+            }
+            final BufferedReader bufReader = new BufferedReader(new StringReader(stringBuffer.toString()));
+            String line = null;
+
+            while ((line = bufReader.readLine()) != null) {
+
+                keywords.add(line);
+
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
+        // Obtain a number between [0 - 49].
         int id = rand.nextInt(999999999);
 
 
@@ -49,13 +99,13 @@ public class AlarmReceiver extends BroadcastReceiver {
         Thread downloadThread = new Thread() {
 
             public void run() {
-
+                Log.d("HERE","HERE1");
                 for (String website : url) {
-
+                    Log.d("HERE","HERE2");
                     Document doc;
 
                     try {
-
+                        Log.d("HERE","HERE3");
 
                         String Message;
                         FileInputStream fileinput = arg0.openFileInput(file_name);
@@ -64,6 +114,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                         StringBuffer stringBuffer = new StringBuffer();
                         while (((Message = bufferedReader.readLine()) != null)) {
                             stringBuffer.append(Message + "\n");
+                            Log.d("HERE","HERE4");
                         }
                         final BufferedReader bufReader = new BufferedReader(new StringReader(stringBuffer.toString()));
                         String line = null;
@@ -71,6 +122,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                         while ((line = bufReader.readLine()) != null) {
                             doc = Jsoup.connect(website).timeout(60 * 10000).get();
                             String webpagecontent = doc.toString();
+                            Log.d("HERE","HERE5");
 
 
                             int index = webpagecontent.lastIndexOf("<style>");
@@ -95,11 +147,12 @@ public class AlarmReceiver extends BroadcastReceiver {
                                 if (webpagecontent.toLowerCase().contains(key.toLowerCase())) {
                                     String indexofelement = Integer.toString(webpagecontent.indexOf(key.toLowerCase()));
                                     String find = "Website: " + website + " Keyword: " + key+" #?# " + indexofelement;
-
+                                    Log.d("HERE","HERE6");
                                     finds.add(find);
                                 }
                             }
-
+                            Log.d("FINDS",finds.toString());
+                            Log.d("HERE","HERE7");
 
                         }
                     } catch (FileNotFoundException e) {
@@ -129,10 +182,11 @@ public class AlarmReceiver extends BroadcastReceiver {
             e.printStackTrace();
         }
 
+
         String Message;
         FileInputStream fileinput = null;
         try {
-
+            Log.d("HERE","HERE9");
             FileOutputStream fileoutput = arg0.openFileOutput(file_name3, Context.MODE_APPEND);
             fileinput = arg0.openFileInput(file_name3);
             InputStreamReader inputStreamReader = new InputStreamReader(fileinput);
@@ -143,22 +197,25 @@ public class AlarmReceiver extends BroadcastReceiver {
 
             while (((Message = bufferedReader.readLine()) != null)) {
                 stringBuffer.append(Message + "\n");
+                Log.d("HERE","HERE10");
             }
             final BufferedReader bufReader = new BufferedReader(new StringReader(stringBuffer.toString()));
             String line = null;
             StringBuffer Alltext = new StringBuffer();
-
+            Log.d("HERE","HERE11");
             while ((line = bufReader.readLine()) != null) {
                 Alltext.append(line);
+                Log.d("HERE","HERE12");
             }
             Log.d("In file",Alltext.toString());
             for(String element : finds) {
-
+                Log.d("HERE","HERE13");
                 Log.d("Element",element);
                 if(!Alltext.toString().toLowerCase().contains(element.toLowerCase())){
-                    found = true;
+                    Log.d("HERE","HERE14");
                     newfinds.add(element.substring(0, element.indexOf("#?#")));
                     fileoutput.write(element.getBytes());
+
 
                 }
 
@@ -166,10 +223,11 @@ public class AlarmReceiver extends BroadcastReceiver {
             fileoutput.close();
 
             FileOutputStream fileoutput2 = arg0.openFileOutput(file_name4, Context.MODE_PRIVATE);
-
+            Log.d("HERE","HERE14");
             for(String element: newfinds){
+                Log.d("HERE","HERE15");
                 Log.d("Add","added");
-                element+='\n';
+                element+="\n";
                 fileoutput2.write(element.getBytes());
             }
             fileoutput2.close();
@@ -185,16 +243,47 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
 
 
+        StringBuilder alert = new StringBuilder();
+        try {
+            Log.d("HERE","HERE16");
+            // GETTING stings out of file
+            Message = null;
+            fileinput = arg0.openFileInput(file_name4);
+            InputStreamReader inputStreamReader = new InputStreamReader(fileinput);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            StringBuffer stringBuffer = new StringBuffer();
+            while (((Message=bufferedReader.readLine())!=null)){
+                stringBuffer.append(Message+"\n");
+                Log.d("HERE","HERE17");
+
+            }
+            Log.d("HERE","HERE18");
+            final BufferedReader bufReader = new BufferedReader(new StringReader(stringBuffer.toString()));
+            String line = null;
 
 
+            while( (line=bufReader.readLine()) != null ) {
+                alert.append(line);
+                alert.append("\n");
+                Log.d("HERE","HERE19");
 
 
+            }
 
+            Log.d("HERE","HERE20");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        Log.d("HERE","HERE21");
         Intent intent = new Intent(arg0, FindsActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(arg0, 0, intent, 0);
         NotificationCompat.Builder builder;
-        if(found) {
+        if(alert.toString().length()>0) {
            builder = new NotificationCompat.Builder(arg0, CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_check_box_black_24dp)
                     .setContentTitle("BookHunter")
@@ -202,7 +291,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                     .setContentText("Books found:")
 
                     .setStyle(new NotificationCompat.BigTextStyle()
-                            .bigText(newfinds.toString()))
+                            .bigText(alert.toString()))
 
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     // Set the intent that will fire when the user taps the notification

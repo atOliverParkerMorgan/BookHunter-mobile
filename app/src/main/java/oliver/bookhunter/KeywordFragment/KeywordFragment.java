@@ -125,7 +125,9 @@ public class KeywordFragment extends Fragment {
         mSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 keyword = mKeyword_text.getText().toString();
+                mKeyword_text.setText("");
 
 
 

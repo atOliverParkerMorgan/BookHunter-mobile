@@ -94,7 +94,7 @@ public class HomeFragment extends Fragment {
         // Apply the adapter to the spinner
         try {
             String Message;
-            final FileInputStream fileinput = getActivity().openFileInput("spineritem");
+             final FileInputStream fileinput = getActivity().openFileInput("spineritem");
             InputStreamReader inputStreamReader = new InputStreamReader(fileinput);
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             StringBuffer stringBuffer = new StringBuffer();
@@ -134,13 +134,16 @@ public class HomeFragment extends Fragment {
         spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                // An item was selected. You can retrieve the selected item using
                 String element = (String) parent.getItemAtPosition(position);
-                if (element.equals("5 min")) {
+                // An item was selected. You can retrieve the selected item using
+                if (element.equals("never")) {
+                    addtofile(0);
+                    setAlarm(999999999);
+                }
+                else if (element.equals("5 min")) {
                     addtofile(1);
                     Toast.makeText(getActivity(),"hunting every 5 min",Toast.LENGTH_LONG).show();
-                    setAlarm(300000);
+                    setAlarm(60000);
                 } else if (element.equals("15 min")) {
                     addtofile(2);
                     Toast.makeText(getActivity(),"hunting every 15 min",Toast.LENGTH_LONG).show();
@@ -240,144 +243,7 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-
-                Thread downloadThread = new Thread() {
-
-                    public void run() {
-
-                        for (String website : url) {
-
-                            Document doc;
-
-                            try {
-
-
-                                String Message;
-                                FileInputStream fileinput = getContext().openFileInput(file_name);
-                                InputStreamReader inputStreamReader = new InputStreamReader(fileinput);
-                                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                                StringBuffer stringBuffer = new StringBuffer();
-                                while (((Message = bufferedReader.readLine()) != null)) {
-                                    stringBuffer.append(Message + "\n");
-                                }
-                                final BufferedReader bufReader = new BufferedReader(new StringReader(stringBuffer.toString()));
-                                String line = null;
-
-                                while ((line = bufReader.readLine()) != null) {
-                                    doc = Jsoup.connect(website).timeout(60 * 10000).get();
-                                    String webpagecontent = doc.toString();
-
-
-                                    int index = webpagecontent.lastIndexOf("<style>");
-                                    int index2 = webpagecontent.lastIndexOf("</style>");
-                                    int index3 = webpagecontent.lastIndexOf("<script>");
-                                    int index4 = webpagecontent.lastIndexOf("</script>");
-                                    if (index == -1 || index2 == -1) {
-                                        Log.d("Error:", "no css on webpage");
-                                    } else {
-                                        webpagecontent = webpagecontent.substring(0, index) + webpagecontent.substring(index2);
-                                    }
-                                    if (index3 == -1 || index4 == -1) {
-                                        Log.d("Error:", "no javasrcript on webpage");
-                                    } else {
-                                        index3 = webpagecontent.lastIndexOf("<script>");
-                                        index4 = webpagecontent.lastIndexOf("</script>");
-                                        webpagecontent = webpagecontent.substring(0, index3) + webpagecontent.substring(index4);
-                                    }
-                                    webpagecontent = webpagecontent.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", " ");
-
-                                    for (String key : keywords) {
-                                        if (webpagecontent.toLowerCase().contains(key.toLowerCase())) {
-                                            String indexofelement = Integer.toString(webpagecontent.indexOf(key.toLowerCase()));
-                                            String find = "Website: " + website + " Keyword: " + key+" #?# " + indexofelement;
-
-                                            finds.add(find);
-                                        }
-                                    }
-
-
-                                }
-                            } catch (FileNotFoundException e) {
-                                Toast.makeText(getActivity(), "Error: no internet connection / no memory space", Toast.LENGTH_LONG).show();
-                                e.printStackTrace();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                Toast.makeText(getActivity(), "Error: no internet connection / no memory space", Toast.LENGTH_LONG).show();
-                            }
-
-
-                        }
-
-
-                    }
-
-                };
-
-                downloadThread.start();
-                mloading.setVisibility(View.VISIBLE);
-
-                try {
-
-                    downloadThread.join();
-                } catch (InterruptedException e) {
-                    Toast.makeText(getActivity(), "Please don't touch the screen", Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
-                }
-
-                String Message;
-                FileInputStream fileinput = null;
-                try {
-
-                    FileOutputStream fileoutput = getActivity().openFileOutput(file_name3, Context.MODE_APPEND);
-                    fileinput = getActivity().openFileInput(file_name3);
-                    InputStreamReader inputStreamReader = new InputStreamReader(fileinput);
-                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                    StringBuffer stringBuffer = new StringBuffer();
-
-
-
-                    while (((Message = bufferedReader.readLine()) != null)) {
-                        stringBuffer.append(Message + "\n");
-                    }
-                    final BufferedReader bufReader = new BufferedReader(new StringReader(stringBuffer.toString()));
-                    String line = null;
-                    StringBuffer Alltext = new StringBuffer();
-
-                    while ((line = bufReader.readLine()) != null) {
-                            Alltext.append(line);
-                        }
-                    Log.d("In file",Alltext.toString());
-                    for(String element : finds) {
-                        Log.d("Element",element);
-                        if(!Alltext.toString().toLowerCase().contains(element.toLowerCase())){
-                            newfinds.add(element.substring(0, element.indexOf("#?#")));
-                            fileoutput.write(element.getBytes());
-
-                        }
-
-                    }
-                    fileoutput.close();
-
-                    FileOutputStream fileoutput2 = getActivity().openFileOutput(file_name4, Context.MODE_PRIVATE);
-                    for(String element: newfinds){
-                        Log.d("Add","added");
-                        element+='\n';
-                        fileoutput2.write(element.getBytes());
-                    }
-                    fileoutput2.close();
-
-
-
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                    Log.d("ERORR2","ERROR2");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Log.d("ERORR","ERROR");
-                }
-
-                Log.d("Size",Integer.toString(newfinds.size())+" "+Integer.toString(finds.size()));
-                startActivity(new Intent(getActivity(), FindsActivity.class));
+                Hunt();
             }
 
         });
@@ -385,12 +251,157 @@ public class HomeFragment extends Fragment {
 
         return mDemoView;
     }
+    public void Hunt(){
+        Thread downloadThread = new Thread() {
+
+            public void run() {
+
+                for (String website : url) {
+
+                    Document doc;
+
+                    try {
+
+
+                        String Message;
+                        FileInputStream fileinput = getContext().openFileInput(file_name);
+                        InputStreamReader inputStreamReader = new InputStreamReader(fileinput);
+                        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                        StringBuffer stringBuffer = new StringBuffer();
+                        while (((Message = bufferedReader.readLine()) != null)) {
+                            stringBuffer.append(Message + "\n");
+                        }
+                        final BufferedReader bufReader = new BufferedReader(new StringReader(stringBuffer.toString()));
+                        String line = null;
+
+                        while ((line = bufReader.readLine()) != null) {
+                            doc = Jsoup.connect(website).timeout(60 * 10000).get();
+                            String webpagecontent = doc.toString();
+
+
+                            int index = webpagecontent.lastIndexOf("<style>");
+                            int index2 = webpagecontent.lastIndexOf("</style>");
+                            int index3 = webpagecontent.lastIndexOf("<script>");
+                            int index4 = webpagecontent.lastIndexOf("</script>");
+                            if (index == -1 || index2 == -1) {
+                                Log.d("Error:", "no css on webpage");
+                            } else {
+                                webpagecontent = webpagecontent.substring(0, index) + webpagecontent.substring(index2);
+                            }
+                            if (index3 == -1 || index4 == -1) {
+                                Log.d("Error:", "no javasrcript on webpage");
+                            } else {
+                                index3 = webpagecontent.lastIndexOf("<script>");
+                                index4 = webpagecontent.lastIndexOf("</script>");
+                                webpagecontent = webpagecontent.substring(0, index3) + webpagecontent.substring(index4);
+                            }
+                            webpagecontent = webpagecontent.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", " ");
+
+                            for (String key : keywords) {
+                                if (webpagecontent.toLowerCase().contains(key.toLowerCase())) {
+                                    String indexofelement = Integer.toString(webpagecontent.indexOf(key.toLowerCase()));
+                                    String find = "Website: " + website + " Keyword: " + key+" #?# " + indexofelement;
+
+                                    finds.add(find);
+                                }
+                            }
+
+
+                        }
+                    } catch (FileNotFoundException e) {
+                        Toast.makeText(getActivity(), "Error: no internet connection / no memory space", Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Toast.makeText(getActivity(), "Error: no internet connection / no memory space", Toast.LENGTH_LONG).show();
+                    }
+
+
+                }
+
+
+            }
+
+        };
+
+        downloadThread.start();
+        mloading.setVisibility(View.VISIBLE);
+
+        try {
+
+            downloadThread.join();
+        } catch (InterruptedException e) {
+            Toast.makeText(getActivity(), "Please don't touch the screen", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+
+        String Message;
+        FileInputStream fileinput = null;
+        try {
+
+            FileOutputStream fileoutput = getActivity().openFileOutput(file_name3, Context.MODE_APPEND);
+            fileinput = getActivity().openFileInput(file_name3);
+            InputStreamReader inputStreamReader = new InputStreamReader(fileinput);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            StringBuffer stringBuffer = new StringBuffer();
+
+
+
+            while (((Message = bufferedReader.readLine()) != null)) {
+                stringBuffer.append(Message + "\n");
+            }
+            final BufferedReader bufReader = new BufferedReader(new StringReader(stringBuffer.toString()));
+            String line = null;
+            StringBuffer Alltext = new StringBuffer();
+
+            while ((line = bufReader.readLine()) != null) {
+                Alltext.append(line);
+            }
+            Log.d("In file",Alltext.toString());
+            for(String element : finds) {
+                Log.d("Element",element);
+                if(!Alltext.toString().toLowerCase().contains(element.toLowerCase())){
+                    newfinds.add(element.substring(0, element.indexOf("#?#")));
+                    fileoutput.write(element.getBytes());
+
+                }
+
+            }
+            fileoutput.close();
+
+            FileOutputStream fileoutput2 = getActivity().openFileOutput(file_name4, Context.MODE_PRIVATE);
+            for(String element: newfinds){
+                Log.d("Add","added");
+                element+='\n';
+                fileoutput2.write(element.getBytes());
+            }
+            fileoutput2.close();
+
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Log.d("ERORR2","ERROR2");
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d("ERORR","ERROR");
+        }
+
+        Log.d("Size",Integer.toString(newfinds.size())+" "+Integer.toString(finds.size()));
+        startActivity(new Intent(getActivity(), FindsActivity.class));
+    }
+
+
+
+
+
+
+
     public void setAlarm(int interval){
 
         Date dat = new Date();
         Calendar cal_alarm = Calendar.getInstance();
 
-        interval = 60000;
         cal_alarm.setTime(dat);
         //cal_alarm.set(Calendar.HOUR_OF_DAY, 10);
         //cal_alarm.set(Calendar.MINUTE, 43);
@@ -399,8 +410,10 @@ public class HomeFragment extends Fragment {
         Intent alarmIntent = new Intent(getActivity(), AlarmReceiver.class);
         pendingIntent = (PendingIntent) pendingIntent.getBroadcast(getActivity(),
                 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        manager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-        manager.setRepeating(AlarmManager.RTC_WAKEUP, cal_alarm.getTimeInMillis(), interval, pendingIntent);
+        if(interval>-1) {
+            manager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+            manager.setRepeating(AlarmManager.RTC_WAKEUP, cal_alarm.getTimeInMillis(), interval, pendingIntent);
+        }
 
     }
 
