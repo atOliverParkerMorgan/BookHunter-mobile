@@ -2,7 +2,6 @@ package oliver.bookhunter.Home;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -33,6 +32,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import oliver.bookhunter.AlarmReceiver;
@@ -56,14 +57,13 @@ public class HomeFragment extends Fragment {
     private List<String> finds = new ArrayList<>();
     private List<String> newfinds = new ArrayList<>();
 
-    ProgressDialog progressBar;
-    private int progressBarStatus = 0;
-    //private  Handler progressBarHandler = new Handler();
+
 
     private long fileSize = 0;
 
     private PendingIntent pendingIntent;
     private AlarmManager manager;
+    private Calendar cal_alarm;
 
     public void addtofile (int num){
         try {
@@ -114,12 +114,14 @@ public class HomeFragment extends Fragment {
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            spinner.setAdapter(adapter);
 
-            Toast.makeText(getActivity(),"Error",Toast.LENGTH_SHORT).show();
+
         } catch (IOException e) {
             e.printStackTrace();
+            spinner.setAdapter(adapter);
 
-            Toast.makeText(getActivity(),"Error",Toast.LENGTH_SHORT).show();
+
         }
 
 
@@ -385,12 +387,21 @@ public class HomeFragment extends Fragment {
     }
     public void setAlarm(int interval){
 
+        Date dat = new Date();
+        Calendar cal_alarm = Calendar.getInstance();
+
+        interval = 60000;
+        cal_alarm.setTime(dat);
+        //cal_alarm.set(Calendar.HOUR_OF_DAY, 10);
+        //cal_alarm.set(Calendar.MINUTE, 43);
+        //cal_alarm.set(Calendar.SECOND, 0);
         // Retrieve a PendingIntent that will perform a broadcast
         Intent alarmIntent = new Intent(getActivity(), AlarmReceiver.class);
-        pendingIntent = PendingIntent.getBroadcast(getActivity(), 0, alarmIntent, 0);
+        pendingIntent = (PendingIntent) pendingIntent.getBroadcast(getActivity(),
+                0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         manager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-        manager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
-        Toast.makeText(getActivity(), "Alarm Set", Toast.LENGTH_SHORT).show();
+        manager.setRepeating(AlarmManager.RTC_WAKEUP, cal_alarm.getTimeInMillis(), interval, pendingIntent);
+
     }
 
 
