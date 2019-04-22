@@ -18,16 +18,19 @@
         tools:ignore="GoogleAppIndexingWarning">
 
         <activity
-            android:name="oliver.bookhunter.LoginActivity"
+            android:name=".LoginActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" >
 
-
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <activity
-            android:name="oliver.bookhunter.RegisterActivity"
+            android:name=".RegisterActivity"
             android:screenOrientation="portrait">
         </activity>
 
@@ -51,10 +54,12 @@
 
             <intent-filter>
 
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <receiver android:name="oliver.bookhunter.AlarmReceiver"/>
+        <receiver android:name=".AlarmReceiver"/>
 
     </application>
 
