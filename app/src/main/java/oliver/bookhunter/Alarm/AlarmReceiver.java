@@ -1,4 +1,4 @@
-package oliver.bookhunter;
+package oliver.bookhunter.Alarm;
 
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -23,6 +23,9 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import oliver.bookhunter.FindsActivity;
+import oliver.bookhunter.R;
 
 public class AlarmReceiver extends BroadcastReceiver {
     private static final String CHANNEL_ID = "#bookshunter";
@@ -146,7 +149,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                             for (String key : keywords) {
                                 if (webpagecontent.toLowerCase().contains(key.toLowerCase())) {
                                     String indexofelement = Integer.toString(webpagecontent.indexOf(key.toLowerCase()));
-                                    String find = "Website: " + website + " Keyword: " + key+" #?# " + indexofelement;
+                                    String find = "Website: " + website + " Profile: " + key+" #?# " + indexofelement;
 
                                     finds.add(find);
                                 }

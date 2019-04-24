@@ -95,7 +95,7 @@ public class MyAdapter3 extends RecyclerView.Adapter<oliver.bookhunter.MyAdapter
     }
 
     public void find(String delete){
-        String link = delete.substring(delete.indexOf("Website:"), delete.indexOf("Keyword:"));
+        String link = delete.substring(delete.indexOf("Website:"), delete.indexOf("Profile:"));
         link = link.substring(9);
         Log.d("Link",link);
         Uri uri = Uri.parse(link); // missing 'http://' will cause crashed

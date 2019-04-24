@@ -1,6 +1,7 @@
 package oliver.bookhunter.KeywordFragment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,11 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -27,7 +33,11 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import oliver.bookhunter.InputClass;
+import oliver.bookhunter.Login.LoginActivity;
+import oliver.bookhunter.Login.Profile;
 import oliver.bookhunter.R;
+import oliver.bookhunter.Login.RegisterActivity;
 
 public class KeywordFragment extends Fragment {
     // the fragment view
@@ -50,7 +60,8 @@ public class KeywordFragment extends Fragment {
     private List<ItemData2> itemsData ;
     //Recycle View
 
-
+    //Datbase
+    private DatabaseReference mDatabseRefrence;
 
 
 
@@ -61,7 +72,7 @@ public class KeywordFragment extends Fragment {
 
 
 
-
+        mDatabseRefrence = FirebaseDatabase.getInstance().getReference();
 
         //get main view
         mDemoView = inflater.inflate(R.layout.fragment_keyword, container, false);
@@ -116,21 +127,25 @@ public class KeywordFragment extends Fragment {
         recyclerView.setAdapter(mAdapter);
         // 5. set item animator to DefaultAnimator
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-
-
-
-
-
         mSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 keyword = mKeyword_text.getText().toString();
                 mKeyword_text.setText("");
+                SharedPreferences prefs = getActivity().getSharedPreferences(RegisterActivity.CHAT_PREFS,Context.MODE_PRIVATE);
+                final String name = prefs.getString(RegisterActivity.DISPLAY_NAME_KEY,null);
+                final String email = prefs.getString(LoginActivity.DISPLAY_EMAIL_KEY,null);
+                final String password = prefs.getString(LoginActivity.DISPLAY_PASSWORD_KEY,null);
 
+                //get firebase user
+                final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-
+                //get reference
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+                Profile tempProfile = new Profile(name,email,password);
+                InputClass input = new InputClass(keyword);
+                mDatabseRefrence.child(tempProfile.getEmail()).push().setValue(input);
 
 
 

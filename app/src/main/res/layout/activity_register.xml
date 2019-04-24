@@ -6,7 +6,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="oliver.bookhunter.RegisterActivity"
+    tools:context="oliver.bookhunter.Login.RegisterActivity"
     android:background="@drawable/sutnar2"
     >
 
@@ -37,7 +37,7 @@
 
 
         <AutoCompleteTextView
-            app:layout_constraintTop_toBottomOf="@id/register_username"
+            app:layout_constraintTop_toBottomOf="@+id/register_username"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@id/register_password"
@@ -98,7 +98,7 @@
 
 
     <Button
-        app:layout_constraintBottom_toTopOf="@id/exit"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:id="@+id/register_sign_up_button"
@@ -118,8 +118,8 @@
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_arrow_back_black_24dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/white"
         />
 
 

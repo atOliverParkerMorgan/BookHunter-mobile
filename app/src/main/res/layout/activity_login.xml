@@ -6,7 +6,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="oliver.bookhunter.LoginActivity"
+    tools:context="oliver.bookhunter.Login.LoginActivity"
     android:background="@drawable/sutnar"
     >
 
@@ -53,8 +53,8 @@
         android:imeOptions="actionNext"
         android:inputType="textEmailAddress"
         android:maxLines="1"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
+        android:textColor="#848482"
+        android:textColorHint="#848482"
 
         android:textIsSelectable="false"
         android:textStyle="bold"
@@ -72,8 +72,8 @@
             app:layout_constraintTop_toBottomOf="@id/login_email"
 
             android:id="@+id/login_password"
-            android:textColor="@color/white"
-            android:textColorHint="@color/white"
+            android:textColor="#848482"
+            android:textColorHint="#848482"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/prompt_password"

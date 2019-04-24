@@ -1,6 +1,7 @@
 package oliver.bookhunter.Website;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -19,6 +20,11 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -32,7 +38,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import oliver.bookhunter.InputClass;
+import oliver.bookhunter.Login.LoginActivity;
+import oliver.bookhunter.Login.Profile;
 import oliver.bookhunter.R;
+import oliver.bookhunter.Login.RegisterActivity;
 
 public class WebsiteFragment extends Fragment {
     // the fragment view
@@ -56,6 +66,7 @@ public class WebsiteFragment extends Fragment {
     //all website
     private List<ItemData> itemsData ;
     //Recycle View
+    private DatabaseReference mDatabseRefrence;
 
 
     // method if a website exist
@@ -148,12 +159,12 @@ public class WebsiteFragment extends Fragment {
 
 
 
-        mWebsite_text.setText("http://");
+
         mSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 website = mWebsite_text.getText().toString();
-                mWebsite_text.setText("http://");
+
 
 
 
@@ -178,6 +189,20 @@ public class WebsiteFragment extends Fragment {
                 if(!isawebsite){
                     Toast.makeText(getActivity(), "Error not a website / not connected", Toast.LENGTH_LONG).show();
                 }else{
+                    mDatabseRefrence = FirebaseDatabase.getInstance().getReference();
+                    SharedPreferences prefs = getActivity().getSharedPreferences(RegisterActivity.CHAT_PREFS,Context.MODE_PRIVATE);
+                    final String name = prefs.getString(RegisterActivity.DISPLAY_NAME_KEY,null);
+                    final String email = prefs.getString(LoginActivity.DISPLAY_EMAIL_KEY,null);
+                    final String password = prefs.getString(LoginActivity.DISPLAY_PASSWORD_KEY,null);
+
+                    //get firebase user
+                    final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                    //get reference
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+                    Profile tempProfile = new Profile(name,email,password);
+                    InputClass input = new InputClass(website);
+                    mDatabseRefrence.child(tempProfile.getEmail()).push().setValue(input);
 
                     itemsData.add(new ItemData(website, R.drawable.ic_delete_black_24dp));
                     mAdapter.notifyDataSetChanged();

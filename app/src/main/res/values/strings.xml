@@ -16,9 +16,10 @@
     <string name="time_text">look for books every:</string>
     <string name="http">http://</string>
     <string name="Login">Login</string>
+    <string name="Loading">Loading</string>
 
 
-
+    <string name="usererror">Username too long or too short or taken</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_username">Username</string>
     <string name="prompt_password">Password</string>

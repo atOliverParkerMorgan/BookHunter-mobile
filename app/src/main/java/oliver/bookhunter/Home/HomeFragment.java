@@ -13,7 +13,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,7 +35,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import oliver.bookhunter.AlarmReceiver;
+import oliver.bookhunter.Alarm.AlarmReceiver;
 import oliver.bookhunter.FindsActivity;
 import oliver.bookhunter.R;
 
@@ -44,8 +43,8 @@ import oliver.bookhunter.R;
 public class HomeFragment extends Fragment {
     private View mDemoView;
     private Button mHunt;
-    private ProgressBar mloading;
     private TextView textView;
+    private TextView User;
     private Document document;
     private final String file_name = "bookhunter_file";
     private final String file_name2 = "bookhunter_file2";
@@ -85,7 +84,15 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        final LayoutInflater minflater = inflater;
+        final ViewGroup mcontainer = container;
         mDemoView = inflater.inflate(R.layout.fragment_home, container, false);
+
+        //User = (TextView) mDemoView.findViewById(R.id.user);
+        //SharedPreferences prefs = getActivity().getSharedPreferences(RegisterActivity.CHAT_PREFS,Context.MODE_PRIVATE);
+        //String mUser = prefs.getString(RegisterActivity.DISPLAY_NAME_KEY,null);
+        //User.setText("  " + mUser);
+
 
 
         Spinner spinner = (Spinner) mDemoView.findViewById(R.id.time_spinner);
@@ -236,13 +243,13 @@ public class HomeFragment extends Fragment {
 
         textView = (TextView)  mDemoView.findViewById(R.id.text);
         mHunt = (Button) mDemoView.findViewById(R.id.Hunt);
-        mloading = (ProgressBar)  mDemoView.findViewById(R.id.progressBar);
-        mloading.setVisibility(View.INVISIBLE);
+
         mHunt.setOnClickListener(new View.OnClickListener() {
 
 
             @Override
             public void onClick(View v) {
+                Toast.makeText(getContext(),"Hunting...",Toast.LENGTH_LONG).show();
                 Hunt();
             }
 
@@ -252,6 +259,8 @@ public class HomeFragment extends Fragment {
         return mDemoView;
     }
     public void Hunt(){
+
+
         Thread downloadThread = new Thread() {
 
             public void run() {
@@ -300,7 +309,7 @@ public class HomeFragment extends Fragment {
                             for (String key : keywords) {
                                 if (webpagecontent.toLowerCase().contains(key.toLowerCase())) {
                                     String indexofelement = Integer.toString(webpagecontent.indexOf(key.toLowerCase()));
-                                    String find = "Website: " + website + " Keyword: " + key+" #?# " + indexofelement;
+                                    String find = "Website: " + website + " Profile: " + key+" #?# " + indexofelement;
 
                                     finds.add(find);
                                 }
@@ -325,7 +334,6 @@ public class HomeFragment extends Fragment {
         };
 
         downloadThread.start();
-        mloading.setVisibility(View.VISIBLE);
 
         try {
 
@@ -388,6 +396,7 @@ public class HomeFragment extends Fragment {
         }
 
         Log.d("Size",Integer.toString(newfinds.size())+" "+Integer.toString(finds.size()));
+        getActivity().finish();
         startActivity(new Intent(getActivity(), FindsActivity.class));
     }
 
