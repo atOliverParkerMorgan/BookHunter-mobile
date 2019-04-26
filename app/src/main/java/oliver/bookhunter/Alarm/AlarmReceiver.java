@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import oliver.bookhunter.FindsActivity;
+import oliver.bookhunter.Home.FindsActivity;
 import oliver.bookhunter.R;
 
 public class AlarmReceiver extends BroadcastReceiver {

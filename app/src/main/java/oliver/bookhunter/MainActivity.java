@@ -1,7 +1,6 @@
 package oliver.bookhunter;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -35,21 +34,24 @@ import java.util.Map;
 
 import oliver.bookhunter.Home.HomeFragment;
 import oliver.bookhunter.KeywordFragment.KeywordFragment;
-import oliver.bookhunter.Login.LoginActivity;
 import oliver.bookhunter.Login.Profile;
-import oliver.bookhunter.Login.RegisterActivity;
 import oliver.bookhunter.Website.WebsiteFragment;
 
 
 
 public class MainActivity extends AppCompatActivity {
 
+    //change fragments
     private int mFragmentContainer;
     private FragmentManager mFragmentManager;
     private FragmentTransaction mFragmentTransaction;
     private Fragment mSelectedFragment;
+
+    //filenames
     private final String file_name = "bookhunter_file2";
     private final String file_name2 = "bookhunter_file";
+
+    // profile object
     private Profile tempProfile;
 
 
@@ -96,31 +98,29 @@ public class MainActivity extends AppCompatActivity {
 
 
         setContentView(R.layout.activity_main);
-        SharedPreferences prefs = getSharedPreferences(RegisterActivity.CHAT_PREFS,Context.MODE_PRIVATE);
-        final String name = prefs.getString(RegisterActivity.DISPLAY_NAME_KEY,null);
-        final String email = prefs.getString(LoginActivity.DISPLAY_EMAIL_KEY,null);
-        final String password = prefs.getString(LoginActivity.DISPLAY_PASSWORD_KEY,null);
-        Log.d("EMAIL",email);
-        Log.d("NAME",name);
-        Log.d("PASSWORD",password);
+        //SharedPreferences prefs = getSharedPreferences(RegisterActivity.CHAT_PREFS,Context.MODE_PRIVATE);
+        //final String name = prefs.getString(RegisterActivity.DISPLAY_NAME_KEY,null);
+        //final String email = prefs.getString(LoginActivity.DISPLAY_EMAIL_KEY,null);
+       // final String password = prefs.getString(LoginActivity.DISPLAY_PASSWORD_KEY,null);
+       // Log.d("EMAIL",email);
+       // Log.d("NAME",name);
+       // Log.d("PASSWORD",password);
         //get firebase user
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         //get reference
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-        tempProfile = new Profile(name,email,password);
-        Log.d("EMAIL",tempProfile.getEmail());
-        Log.d("NAME",tempProfile.getName());
-        Log.d("PASSWORD",tempProfile.getPassword());
+       // tempProfile = new Profile(name,email,password);
+
         //build child
-        ref.child(user.getUid()).setValue(email);
+       // ref.child(user.getUid()).setValue(email);
         //grab info
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //this is my user_class Class
 
-                    Log.i("TEST", tempProfile.getEmail() + ": " + dataSnapshot.child(tempProfile.getEmail()).getValue());
+//                    Log.i("TEST", tempProfile.getEmail() + ": " + dataSnapshot.child(tempProfile.getEmail()).getValue());
 
             }
 
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
 
-        ref = FirebaseDatabase.getInstance().getReference().child(tempProfile.getName());
+       // ref = FirebaseDatabase.getInstance().getReference().child(tempProfile.getName());
         ref.addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override

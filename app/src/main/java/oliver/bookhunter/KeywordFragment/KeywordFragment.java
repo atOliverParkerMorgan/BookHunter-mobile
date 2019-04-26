@@ -1,7 +1,6 @@
 package oliver.bookhunter.KeywordFragment;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,10 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import oliver.bookhunter.InputClass;
-import oliver.bookhunter.Login.LoginActivity;
-import oliver.bookhunter.Login.Profile;
 import oliver.bookhunter.R;
-import oliver.bookhunter.Login.RegisterActivity;
 
 public class KeywordFragment extends Fragment {
     // the fragment view
@@ -133,19 +129,19 @@ public class KeywordFragment extends Fragment {
 
                 keyword = mKeyword_text.getText().toString();
                 mKeyword_text.setText("");
-                SharedPreferences prefs = getActivity().getSharedPreferences(RegisterActivity.CHAT_PREFS,Context.MODE_PRIVATE);
-                final String name = prefs.getString(RegisterActivity.DISPLAY_NAME_KEY,null);
-                final String email = prefs.getString(LoginActivity.DISPLAY_EMAIL_KEY,null);
-                final String password = prefs.getString(LoginActivity.DISPLAY_PASSWORD_KEY,null);
+               // SharedPreferences prefs = getActivity().getSharedPreferences(RegisterActivity.CHAT_PREFS,Context.MODE_PRIVATE);
+                //final String name = prefs.getString(RegisterActivity.DISPLAY_NAME_KEY,null);
+                //final String email = prefs.getString(LoginActivity.DISPLAY_EMAIL_KEY,null);
+                //final String password = prefs.getString(LoginActivity.DISPLAY_PASSWORD_KEY,null);
 
                 //get firebase user
                 final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
                 //get reference
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-                Profile tempProfile = new Profile(name,email,password);
+                //Profile tempProfile = new Profile(name,email,password);
                 InputClass input = new InputClass(keyword);
-                mDatabseRefrence.child(tempProfile.getEmail()).push().setValue(input);
+                //mDatabseRefrence.child(tempProfile.getEmail()).push().setValue(input);
 
 
 

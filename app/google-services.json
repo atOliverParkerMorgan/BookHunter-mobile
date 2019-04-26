@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "205691177423",
+    "firebase_url": "https://bookhunter-97ace.firebaseio.com",
+    "project_id": "bookhunter-97ace",
+    "storage_bucket": "bookhunter-97ace.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:205691177423:android:31b8c6b518dfba6b",
+        "android_client_info": {
+          "package_name": "oliver.bookhunter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "205691177423-7um6rc2ue566n01f2vul6vh5idm2l40m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "oliver.bookhunter",
+            "certificate_hash": "dc2748f56e36950071768993c9853e742fc010c7"
+          }
+        },
+        {
+          "client_id": "205691177423-18m81495bf9i0m3p5iso2klj8bjhqd97.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPvXfKRH-10f4bzBBeIXacucfzLes64fw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "205691177423-18m81495bf9i0m3p5iso2klj8bjhqd97.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
