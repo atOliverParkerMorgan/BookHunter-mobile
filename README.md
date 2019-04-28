@@ -16,8 +16,17 @@ these are screen shots from the app:
 * ### main page
 ![main bookhunter page](https://i.imgur.com/4JqtbTq.png)
 
+
+
+
+
 * ### add keyword page
 ![keyword bookhunter page](https://i.imgur.com/TKS9zv7.png)
+
+
+
+
+
 
 * ### add website page
 ![websites bookhunter page](https://i.imgur.com/QgrSMjI.png)
