@@ -12,7 +12,7 @@ there are two requirements for this app Android Studio and device with min. SDK 
 
 ## How does it look?
 these are screen shots from the app:
-![alt text](http://url/to/img.png)
+
 
 
 ## Built With
