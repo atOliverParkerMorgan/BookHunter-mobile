@@ -7,8 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -20,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -32,14 +29,11 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import oliver.bookhunter.InputClass;
 import oliver.bookhunter.R;
 
 public class KeywordFragment extends Fragment {
     // the fragment view
     private View mDemoView;
-    // the Website text
-    private TextView mDemoTextView;
 
     private Button mSubmit;
     // add keyword text
@@ -48,8 +42,6 @@ public class KeywordFragment extends Fragment {
     private String keyword;
     // file where websites are saved
     private final String file_name = "bookhunter_file2";
-    // the linear layout where the websites are shown
-    private LinearLayout linearLayout;
 
 
     //all keyword
@@ -57,18 +49,16 @@ public class KeywordFragment extends Fragment {
     //Recycle View
 
     //Datbase
-    private DatabaseReference mDatabseRefrence;
+    private DatabaseReference mDatabase;
+    //Account
+    private FirebaseAuth mAuth;
+
 
 
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-
-
-
-        mDatabseRefrence = FirebaseDatabase.getInstance().getReference();
 
         //get main view
         mDemoView = inflater.inflate(R.layout.fragment_keyword, container, false);
@@ -93,6 +83,8 @@ public class KeywordFragment extends Fragment {
 
             String Message;
             final FileInputStream fileinput = getContext().openFileInput(file_name);
+
+            //format file
             InputStreamReader inputStreamReader = new InputStreamReader(fileinput);
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             StringBuffer stringBuffer = new StringBuffer();
@@ -104,6 +96,8 @@ public class KeywordFragment extends Fragment {
             String line = null;
             int index = 0;
             while( (line=bufReader.readLine()) != null ) {
+
+                //add all element that have already saved
                 itemsData.add(new ItemData2(line, R.drawable.ic_delete_black_24dp));
 
                 index++;
@@ -129,28 +123,18 @@ public class KeywordFragment extends Fragment {
 
                 keyword = mKeyword_text.getText().toString();
                 mKeyword_text.setText("");
-               // SharedPreferences prefs = getActivity().getSharedPreferences(RegisterActivity.CHAT_PREFS,Context.MODE_PRIVATE);
-                //final String name = prefs.getString(RegisterActivity.DISPLAY_NAME_KEY,null);
-                //final String email = prefs.getString(LoginActivity.DISPLAY_EMAIL_KEY,null);
-                //final String password = prefs.getString(LoginActivity.DISPLAY_PASSWORD_KEY,null);
+
 
                 //get firebase user
                 final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-                //get reference
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-                //Profile tempProfile = new Profile(name,email,password);
-                InputClass input = new InputClass(keyword);
-                //mDatabseRefrence.child(tempProfile.getEmail()).push().setValue(input);
 
 
 
-
-
-
-
+                //add to the recycle viewer
                 itemsData.add(new ItemData2(keyword, R.drawable.ic_delete_black_24dp));
                 mAdapter.notifyDataSetChanged();
+
                 Toast.makeText(getActivity(), "Saved", Toast.LENGTH_LONG).show();
 
                 try {
@@ -169,8 +153,11 @@ public class KeywordFragment extends Fragment {
 
         });
 
+
+
         return mDemoView;
     }
+
 
 
 }

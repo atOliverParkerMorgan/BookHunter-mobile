@@ -1,5 +1,6 @@
 package oliver.bookhunter.Home;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -18,6 +19,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 
 import org.jsoup.nodes.Document;
 
@@ -42,6 +46,8 @@ public class HomeFragment extends Fragment {
     private View mDemoView;
     private Button mHunt;
     private TextView textView;
+
+
     private TextView User;
 
     //looking at websites
@@ -60,11 +66,18 @@ public class HomeFragment extends Fragment {
     private PendingIntent pendingIntent;
     private AlarmManager manager;
 
+    //Account
+    private FirebaseAuth mAuth;
+
+    //database
+    private DatabaseReference mDatabase;
+
 
 
 
     public void addtofile (int num){
         try {
+            //add to file the item in the spinner
             FileOutputStream fileoutput = getActivity().openFileOutput("spineritem", Context.MODE_PRIVATE);
             fileoutput.write(Integer.toString(num).getBytes());
             fileoutput.close();
@@ -77,6 +90,7 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -85,10 +99,41 @@ public class HomeFragment extends Fragment {
         final ViewGroup mcontainer = container;
         mDemoView = inflater.inflate(R.layout.fragment_home, container, false);
 
-        //User = (TextView) mDemoView.findViewById(R.id.user);
-        //SharedPreferences prefs = getActivity().getSharedPreferences(RegisterActivity.CHAT_PREFS,Context.MODE_PRIVATE);
-        //String mUser = prefs.getString(RegisterActivity.DISPLAY_NAME_KEY,null);
-        //User.setText("  " + mUser);
+        //USER + DATABASE
+        // Initialize Firebase Auth
+
+
+        //mAuth = FirebaseAuth.getInstance();
+        //final FirebaseUser currentUser = mAuth.getCurrentUser();
+        //Database + Auth
+
+
+
+        //mDatabase = FirebaseDatabase.getInstance().getReference();
+        //oliver.bookhunter.User userData = new User();
+        //mDatabase.push().child(currentUser.getUid()).setValue(userData);
+
+
+        //final TextView user = (TextView) mDemoView.findViewById(R.id.user);
+        //ImageButton reset = (ImageButton) mDemoView.findViewById(R.id.userImage);
+        //user.setText(" "+currentUser.getDisplayName());
+       // reset.setOnClickListener(new View.OnClickListener() {
+        //    @Override
+       //     public void onClick(View v) {
+       //         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+      //                  .requestIdToken(getString(R.string.default_web_client_id))
+       //                 .requestEmail()
+       //                 .build();
+                // [END config_signin]
+
+       //         GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
+       //         mAuth.signOut();
+       //         mGoogleSignInClient.signOut();
+      //          getActivity().finish();
+       //         startActivity(new Intent(getActivity(), GoogleSignInActivity.class));
+
+        //    }
+       // });
 
 
 
@@ -102,6 +147,8 @@ public class HomeFragment extends Fragment {
         try {
             String Message;
              final FileInputStream fileinput = getActivity().openFileInput("spineritem");
+
+            //format file
             InputStreamReader inputStreamReader = new InputStreamReader(fileinput);
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             StringBuffer stringBuffer = new StringBuffer();
@@ -114,6 +161,7 @@ public class HomeFragment extends Fragment {
 
             while ((line = bufReader.readLine()) != null) {
                 int pos = Integer.parseInt(line);
+                //set the spinner to the saved value
                 spinner.setAdapter(adapter);
                 spinner.setSelection(pos);
 
@@ -189,55 +237,6 @@ public class HomeFragment extends Fragment {
 
 
 
-        try {
-            String Message;
-            final FileInputStream fileinput = getActivity().openFileInput(file_name);
-            InputStreamReader inputStreamReader = new InputStreamReader(fileinput);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            StringBuffer stringBuffer = new StringBuffer();
-            while (((Message = bufferedReader.readLine()) != null)) {
-                stringBuffer.append(Message + "\n");
-
-            }
-            final BufferedReader bufReader = new BufferedReader(new StringReader(stringBuffer.toString()));
-            String line = null;
-
-            while ((line = bufReader.readLine()) != null) {
-
-                url.add(line);
-
-            }
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            String Message;
-            final FileInputStream fileinput = getActivity().openFileInput(file_name2);
-            InputStreamReader inputStreamReader = new InputStreamReader(fileinput);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            StringBuffer stringBuffer = new StringBuffer();
-            while (((Message = bufferedReader.readLine()) != null)) {
-                stringBuffer.append(Message + "\n");
-
-            }
-            final BufferedReader bufReader = new BufferedReader(new StringReader(stringBuffer.toString()));
-            String line = null;
-
-            while ((line = bufReader.readLine()) != null) {
-
-                keywords.add(line);
-
-            }
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         textView = (TextView)  mDemoView.findViewById(R.id.text);
         mHunt = (Button) mDemoView.findViewById(R.id.Hunt);
 
@@ -264,6 +263,8 @@ public class HomeFragment extends Fragment {
 
 
     public void setAlarm(int interval){
+
+        //get the current date
         Date dat = new Date();
         Calendar cal_alarm = Calendar.getInstance();
         cal_alarm.setTime(dat);
@@ -272,6 +273,8 @@ public class HomeFragment extends Fragment {
         Intent alarmIntent = new Intent(getActivity(), AlarmReceiver.class);
         pendingIntent = (PendingIntent) PendingIntent.getBroadcast(getActivity(),
                 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        //set a alarm
         manager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
         manager.setRepeating(AlarmManager.RTC_WAKEUP, cal_alarm.getTimeInMillis()+interval*1000, interval * 1000, pendingIntent);
 
@@ -281,6 +284,7 @@ public class HomeFragment extends Fragment {
 
 
     }
+
 
 
 

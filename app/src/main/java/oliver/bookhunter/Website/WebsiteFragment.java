@@ -37,7 +37,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import oliver.bookhunter.InputClass;
 import oliver.bookhunter.R;
 
 public class WebsiteFragment extends Fragment {
@@ -49,6 +48,7 @@ public class WebsiteFragment extends Fragment {
     private Button mSubmit;
     // add website text
     private EditText mWebsite_text;
+    
 
     private String website;
     // file where websites are saved
@@ -107,6 +107,7 @@ public class WebsiteFragment extends Fragment {
         //linearLayout were the website text is displayed
 
 
+
         //Arrays
 
         // 1. get a reference to recyclerView
@@ -162,61 +163,65 @@ public class WebsiteFragment extends Fragment {
                 website = mWebsite_text.getText().toString();
 
 
-
-
-               Thread downloadThread = new Thread() {
+                Thread downloadThread = new Thread() {
                     public void run() {
+                        isawebsite = isServerReachable(getContext(), website);
+                        getActivity().runOnUiThread(new Runnable() {
 
-                isawebsite = isServerReachable(getContext(),website);
+                            @Override
+                            public void run() {
+
+
+
+                                if(!isawebsite){
+
+                                    Toast.makeText(getActivity(), "Error not a website / not connected", Toast.LENGTH_LONG).show();
+
+                                }else{
+
+                                    mDatabseRefrence = FirebaseDatabase.getInstance().getReference();
+
+
+                                    //get firebase user
+                                    final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                                    //get reference
+                                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+
+                                    itemsData.add(new ItemData(website, R.drawable.ic_delete_black_24dp));
+                                    mAdapter.notifyDataSetChanged();
+                                    Toast.makeText(getActivity(), "Saved", Toast.LENGTH_LONG).show();
+
+                                    try {
+                                        FileOutputStream fileoutput = getContext().openFileOutput(file_name, Context.MODE_APPEND);
+                                        website+='\n';
+                                        fileoutput.write(website.getBytes());
+                                        fileoutput.close();
+
+
+                                    } catch (FileNotFoundException e1) {
+                                        e1.printStackTrace();
+                                    } catch (IOException e1) {
+                                        e1.printStackTrace();
+                                    }
+                                }
+
+                            }
+                        });
+
+
 
 
                     }
 
                 };
+
                 downloadThread.start();
 
 
-                try {
-                    downloadThread.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                if(!isawebsite){
-                    Toast.makeText(getActivity(), "Error not a website / not connected", Toast.LENGTH_LONG).show();
-                }else{
-                    mDatabseRefrence = FirebaseDatabase.getInstance().getReference();
-                   // SharedPreferences prefs = getActivity().getSharedPreferences(RegisterActivity.CHAT_PREFS,Context.MODE_PRIVATE);
-                   // final String name = prefs.getString(RegisterActivity.DISPLAY_NAME_KEY,null);
-                  //  final String email = prefs.getString(LoginActivity.DISPLAY_EMAIL_KEY,null);
-                  //  final String password = prefs.getString(LoginActivity.DISPLAY_PASSWORD_KEY,null);
-
-                    //get firebase user
-                    final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-                    //get reference
-                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-                   // Profile tempProfile = new Profile(name,email,password);
-                    InputClass input = new InputClass(website);
-                   // mDatabseRefrence.child(tempProfile.getEmail()).push().setValue(input);
-
-                    itemsData.add(new ItemData(website, R.drawable.ic_delete_black_24dp));
-                    mAdapter.notifyDataSetChanged();
-                    Toast.makeText(getActivity(), "Saved", Toast.LENGTH_LONG).show();
-
-                    try {
-                        FileOutputStream fileoutput = getContext().openFileOutput(file_name, Context.MODE_APPEND);
-                        website+='\n';
-                        fileoutput.write(website.getBytes());
-                        fileoutput.close();
 
 
-                    } catch (FileNotFoundException e1) {
-                        e1.printStackTrace();
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
-                }
+
 
 
 

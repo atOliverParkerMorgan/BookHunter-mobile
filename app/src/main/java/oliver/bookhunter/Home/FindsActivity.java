@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,7 +30,6 @@ import java.util.List;
 
 import oliver.bookhunter.Database;
 import oliver.bookhunter.MainActivity;
-import oliver.bookhunter.MyAdapter3;
 import oliver.bookhunter.R;
 
 public class FindsActivity extends AppCompatActivity {
@@ -37,10 +37,13 @@ public class FindsActivity extends AppCompatActivity {
 
     private List<Database>itemsData;
 
+    //files
     private final String file_name = "bookhunter_file";
     private final String file_name2 = "bookhunter_file2";
     private final String file_name3 = "allfinds";
     private final String file_name4 = "newfinds";
+
+    // the list of all the web pages and keywords
     private  List<String> url = new ArrayList<>();
     private  List<String> keywords = new ArrayList<>();
 
@@ -48,8 +51,13 @@ public class FindsActivity extends AppCompatActivity {
     private List<String> finds = new ArrayList<>();
     private List<String> newfinds = new ArrayList<>();
 
-    //layout
+    //Progressbar + percent textview
     private ProgressBar bar;
+    private TextView percent;
+    private double onepercent;
+    private double currentpercent;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,18 +65,20 @@ public class FindsActivity extends AppCompatActivity {
 
         setContentView(R.layout.finds);
 
+        percent = (TextView) findViewById(R.id.procent);
         bar = (ProgressBar) findViewById(R.id.progressBar);
         ImageButton exit = (ImageButton) findViewById(R.id.exit);
-        // this is data fro recycler view
+
+        // this is data for recycler view
         itemsData = new ArrayList<Database>();
 
-
-        //################## LOOKING FOR BOOKS ######################################
 
         //getting all websites
         try {
             String Message;
             final FileInputStream fileinput = openFileInput(file_name);
+
+            //formatting file
             InputStreamReader inputStreamReader = new InputStreamReader(fileinput);
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             StringBuffer stringBuffer = new StringBuffer();
@@ -80,7 +90,7 @@ public class FindsActivity extends AppCompatActivity {
             String line = null;
 
             while ((line = bufReader.readLine()) != null) {
-
+                //adding file content into the url list
                 url.add(line);
 
             }
@@ -94,6 +104,8 @@ public class FindsActivity extends AppCompatActivity {
         try {
             String Message;
             final FileInputStream fileinput = openFileInput(file_name2);
+
+            //formatting file
             InputStreamReader inputStreamReader = new InputStreamReader(fileinput);
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             StringBuffer stringBuffer = new StringBuffer();
@@ -105,7 +117,7 @@ public class FindsActivity extends AppCompatActivity {
             String line = null;
 
             while ((line = bufReader.readLine()) != null) {
-
+                //adding file content into the keywords list
                 keywords.add(line);
 
             }
@@ -115,6 +127,10 @@ public class FindsActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
+        //look for books with hunt method
+
         Hunt(this);
 
 
@@ -146,25 +162,48 @@ public class FindsActivity extends AppCompatActivity {
 
             public void run() {
                 //go throw all websites
+
+                //get the percentage progress
+
+                //if there are zero web pages then there is no main loop and progress is finished
+                if(url.size()==0){
+                    currentpercent = 100.000;
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+
+                            //UI format
+                            percent.setText(String.format("%s%%",Double.toString(currentpercent).substring(0,Double.toString(currentpercent).indexOf("."))));
+                            bar.setVisibility(View.GONE);
+
+                        }
+                    });
+
+
+
+
+
+                }else {
+
+                    //get the percentage to add after every loop (the end result is 100%)
+                    onepercent =100.000/url.size();
+                }
+
+                //main loop
                 for (String website : url) {
+
                     //get the html as doc
                     Document doc;
 
+                    String Message;
+                    FileInputStream fileinput;
+                    InputStreamReader inputStreamReader;
+                    BufferedReader bufferedReader;
+                    StringBuffer stringBuffer;
+
                     try {
-
-
-                        String Message;
-                        FileInputStream fileinput = openFileInput(file_name);
-                        InputStreamReader inputStreamReader = new InputStreamReader(fileinput);
-                        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                        StringBuffer stringBuffer = new StringBuffer();
-                        while (((Message = bufferedReader.readLine()) != null)) {
-                            stringBuffer.append(Message + "\n");
-                        }
-                        final BufferedReader bufReader = new BufferedReader(new StringReader(stringBuffer.toString()));
-                        String line = null;
-
-                        while ((line = bufReader.readLine()) != null) {
+                            //connect to website and format
                             doc = Jsoup.connect(website).timeout(60 * 10000).get();
                             String webpagecontent = doc.toString();
 
@@ -173,26 +212,34 @@ public class FindsActivity extends AppCompatActivity {
                             int index2 = webpagecontent.lastIndexOf("</style>");
                             int index3 = webpagecontent.lastIndexOf("<script>");
                             int index4 = webpagecontent.lastIndexOf("</script>");
+
+                            //index = -1 mean it does isn't in doc
                             if (index == -1 || index2 == -1) {
-                                Log.d("Error:", "no css on webpage");
+                                Log.d("!", "no css on webpage");
                             } else {
+                                //remove it
                                 webpagecontent = webpagecontent.substring(0, index) + webpagecontent.substring(index2);
                             }
                             if (index3 == -1 || index4 == -1) {
-                                Log.d("Error:", "no javasrcript on webpage");
+                                Log.d("!", "no javasrcript on webpage");
                             } else {
+                                //remove the script from website (if a var contains a key word)
                                 index3 = webpagecontent.lastIndexOf("<script>");
                                 index4 = webpagecontent.lastIndexOf("</script>");
                                 webpagecontent = webpagecontent.substring(0, index3) + webpagecontent.substring(index4);
                             }
+
+                            // remove all tags from websites
                             webpagecontent = webpagecontent.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", " ");
 
-                            //Find with keywords
+                            //go throw keywords
                             for (String key : keywords) {
+                                //compare
                                 if (webpagecontent.toLowerCase().contains(key.toLowerCase())) {
                                     String indexofelement = Integer.toString(webpagecontent.indexOf(key.toLowerCase()));
                                     String find = "Website: " + website + " Keyword: " + key+"#?# " + indexofelement;
 
+                                    //we got find => add it to the list
                                     finds.add(find);
                                 }
                             }
@@ -204,51 +251,35 @@ public class FindsActivity extends AppCompatActivity {
                                 //get file with all finds
                                 FileOutputStream fileoutput = openFileOutput(file_name3, Context.MODE_APPEND);
                                 fileinput = openFileInput(file_name3);
+
+                                //format file
                                 inputStreamReader = new InputStreamReader(fileinput);
                                 bufferedReader = new BufferedReader(inputStreamReader);
                                 StringBuffer Alltext = new StringBuffer();
                                 while (((Message = bufferedReader.readLine()) != null)) {
                                     Alltext.append(Message + "\n");
-                                    Log.d("HERE",Alltext.toString());
+
 
                                 }
 
 
 
-
+                                //check if the file is new or not
                                 for(String element : finds) {
 
                                     if(!Alltext.toString().toLowerCase().contains(element.toLowerCase())){
-
+                                        // add element to find file since it isn't new anymore
                                         fileoutput.write((element+'\n').getBytes());
-                                        Log.d("Element",element.substring(element.indexOf("Keyword:")+9,element.indexOf("#?#")));
-                                        newfinds.add(element.substring(0, element.indexOf("#?#")));
+
+                                        //format file with no index at the end
                                         String newfind = element.substring(0, element.indexOf("#?#"));
-                                        Log.d("FINDS",newfind);
+
+                                        //add it to the recycle viewer
                                         itemsData.add(new Database(newfind, R.drawable.ic_search_black_24dp));
-                                        runOnUiThread(new Runnable() {
-
-                                            @Override
-                                            public void run() {
-
-                                                // Stuff that updates the UI
-                                                // 1. get a reference to recyclerView
-                                                final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.RecyclerView01);
 
 
-                                                // 2. set layoutManger
-                                                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-                                                // 3. create an adapter
-                                                final MyAdapter3 mAdapter = new MyAdapter3(itemsData,context);
-                                                // 4. set adapter
-                                                recyclerView.setAdapter(mAdapter);
-                                                // 5. set item animator to DefaultAnimator
-                                                recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-                                                mAdapter.notifyDataSetChanged();
-                                                bar.setVisibility(View.GONE);
-                                            }
-                                        });
+
 
 
                                     }
@@ -260,17 +291,14 @@ public class FindsActivity extends AppCompatActivity {
 
                             } catch (FileNotFoundException e) {
                                 e.printStackTrace();
-                                Log.d("ERORR2","ERROR2");
+                                Toast.makeText(context,"There as been an error",Toast.LENGTH_LONG).show();
                             } catch (IOException e) {
                                 e.printStackTrace();
-                                Log.d("ERORR","ERROR");
+                                Toast.makeText(context,"There as been an error",Toast.LENGTH_LONG).show();
                             }
 
 
 
-
-
-                        }
                     // not internet / space error
                     } catch (FileNotFoundException e) {
                         Toast.makeText(context, "Error: no internet connection / no memory space", Toast.LENGTH_LONG).show();
@@ -279,6 +307,43 @@ public class FindsActivity extends AppCompatActivity {
                         e.printStackTrace();
                         Toast.makeText(context, "Error: no internet connection / no memory space", Toast.LENGTH_LONG).show();
                     }
+
+                    //add the percentage
+                    currentpercent += onepercent;
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+
+                            //update percentage
+                            percent.setText(String.format("%s%%",Double.toString(currentpercent).substring(0,Double.toString(currentpercent).indexOf("."))));
+
+                            // Stuff that updates the UI
+                            // 1. get a reference to recyclerView
+                            final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.RecyclerView01);
+
+
+                            // 2. set layoutManger
+                            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                            // 3. create an adapter
+                            final MyAdapter3 mAdapter = new MyAdapter3(itemsData,context);
+                            // 4. set adapter
+                            recyclerView.setAdapter(mAdapter);
+                            // 5. set item animator to DefaultAnimator
+                            recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+                            mAdapter.notifyDataSetChanged();
+
+                            //hide progress bar at 100%
+                            if(currentpercent >=100) {
+
+
+                                bar.setVisibility(View.GONE);
+                            }
+                        }
+                    });
+
+
 
 
                 }
@@ -289,10 +354,6 @@ public class FindsActivity extends AppCompatActivity {
         };
         //start the download
         downloadThread.start();
-
-
-        //wait until it finishes downloading and finding books
-
 
 
 

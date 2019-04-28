@@ -13,7 +13,7 @@
     <string name="Keyword_title">Keywords</string>
     <string name="Submit">Submit</string>
     <string name="Finds_title">Finds</string>
-    <string name="time_text">look for books every:</string>
+    <string name="time_text">notify me every: </string>
     <string name="http">http://</string>
     <string name="Login">Login</string>
     <string name="Loading">Loading</string>

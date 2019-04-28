@@ -1,4 +1,4 @@
-package oliver.bookhunter;
+package oliver.bookhunter.Home;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +14,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class MyAdapter3 extends RecyclerView.Adapter<oliver.bookhunter.MyAdapter3.ViewHolder> {
+import oliver.bookhunter.Database;
+import oliver.bookhunter.R;
+
+public class MyAdapter3 extends RecyclerView.Adapter<MyAdapter3.ViewHolder> {
     private List<Database> itemsData;
     public static Context context;
 
@@ -29,21 +32,21 @@ public class MyAdapter3 extends RecyclerView.Adapter<oliver.bookhunter.MyAdapter
 
 
     @Override
-    public oliver.bookhunter.MyAdapter3.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                                                      int viewType) {
+    public MyAdapter3.ViewHolder onCreateViewHolder(ViewGroup parent,
+                                                    int viewType) {
         // create a new view
         View itemLayoutView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.webistetextview, null);
 
         // create ViewHolder
 
-        oliver.bookhunter.MyAdapter3.ViewHolder viewHolder = new oliver.bookhunter.MyAdapter3.ViewHolder(itemLayoutView);
+        MyAdapter3.ViewHolder viewHolder = new MyAdapter3.ViewHolder(itemLayoutView);
         return viewHolder;
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(final oliver.bookhunter.MyAdapter3.ViewHolder viewHolder, final int position) {
+    public void onBindViewHolder(final MyAdapter3.ViewHolder viewHolder, final int position) {
 
         // - get data from your itemsData at this position
         // - replace the contents of the view with that itemsData
@@ -95,7 +98,7 @@ public class MyAdapter3 extends RecyclerView.Adapter<oliver.bookhunter.MyAdapter
     }
 
     public void find(String delete){
-        String link = delete.substring(delete.indexOf("Website:"), delete.indexOf("Profile:"));
+        String link = delete.substring(delete.indexOf("Website:"), delete.indexOf("Keyword:"));
         link = link.substring(9);
         Log.d("Link",link);
         Uri uri = Uri.parse(link); // missing 'http://' will cause crashed

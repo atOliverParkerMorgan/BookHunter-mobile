@@ -3,8 +3,6 @@ package oliver.bookhunter;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
@@ -98,13 +96,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         setContentView(R.layout.activity_main);
-        //SharedPreferences prefs = getSharedPreferences(RegisterActivity.CHAT_PREFS,Context.MODE_PRIVATE);
-        //final String name = prefs.getString(RegisterActivity.DISPLAY_NAME_KEY,null);
-        //final String email = prefs.getString(LoginActivity.DISPLAY_EMAIL_KEY,null);
-       // final String password = prefs.getString(LoginActivity.DISPLAY_PASSWORD_KEY,null);
-       // Log.d("EMAIL",email);
-       // Log.d("NAME",name);
-       // Log.d("PASSWORD",password);
+
         //get firebase user
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -113,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
        // tempProfile = new Profile(name,email,password);
 
         //build child
-       // ref.child(user.getUid()).setValue(email);
+
         //grab info
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -177,12 +169,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.actionbar_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
+    
 
     private void collectKeywords(Map<String,Object> users) {
 
