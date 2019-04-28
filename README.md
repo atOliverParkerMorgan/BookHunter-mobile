@@ -5,7 +5,7 @@ this app looks at a given list of webpages for keywords and if a keyword is on a
 there are two requirements for this app Android Studio and device with min. SDK version 14
 
 
-### How does it look?
+## How does it look?
 
 these are screen shots from the app:
 
@@ -18,9 +18,9 @@ these are screen shots from the app:
 
 
 
-## Authors
+## Author
 
-* **OLIVER MORGAN**
+**OLIVER MORGAN**
 
 ## License
 
