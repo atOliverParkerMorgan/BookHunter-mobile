@@ -1,8 +1,8 @@
 # BookHunter-mobile
 this app looks at a given list of webpages for keywords and returns all the found keyword that were found
 
-## For what con use this?
-you can use this app to looking for new products on a webpages all you need to do is:
+## For what can use this?
+you can use this app to looking for new products on a webpage all you need to do is:
 * suply the app with a list of webpages
 * suply the app with a list of keywords (The app will look if the webpages contain these keywords)
 
@@ -12,7 +12,7 @@ there are two requirements for this app Android Studio and device with min. SDK 
 
 ## How does it look?
 these are screen shots from the app:
-
+![alt text](http://url/to/img.png)
 
 
 ## Built With
