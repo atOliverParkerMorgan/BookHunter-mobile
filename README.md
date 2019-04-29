@@ -50,4 +50,11 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 Please make sure that you have a steady internet connection!
 
-
+## What did I learn? 
+* ### how to work with jsoup
+* ### how to create a UI with a recycleviewer
+* ### handling Auth google account and firebase
+* ### how to use realtimedatabase in firebase
+* ### how to work with a alarm and notifications
+* ### how to work with spinner
+* ### how to check if a webpage exist or not
