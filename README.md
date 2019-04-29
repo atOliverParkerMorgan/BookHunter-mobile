@@ -14,21 +14,24 @@ there are two requirements for this app Android Studio and device with min. SDK 
 these are screen shots from the app:
 
 * ### main page
+<br />
 ![main bookhunter page](https://i.imgur.com/4JqtbTq.png)
 
-
-
+<br />
+<br />
 
 
 * ### add keyword page
+<br />
 ![keyword bookhunter page](https://i.imgur.com/TKS9zv7.png)
 
 
 
-
-
+<br />
+<br />
 
 * ### add website page
+<br />
 ![websites bookhunter page](https://i.imgur.com/QgrSMjI.png)
 
 
