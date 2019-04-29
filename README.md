@@ -1,5 +1,6 @@
 # BookHunter-mobile
-this app looks at a given list of webpages for keywords and returns all the found keyword that were found
+this app looks at a given list of webpages for keywords and returns all the text on these webpages that 
+contain these key words that were found
 
 ## For what can use this?
 you can use this app to looking for new products on a webpage all you need to do is:
@@ -7,11 +8,11 @@ you can use this app to looking for new products on a webpage all you need to do
 * suply the app with a list of keywords (The app will look if the webpages contain these keywords)
 
 ## Getting Started
-there are two requirements for this app Android Studio and device with min. SDK version 14
+there are two requirements for this app Android Studio and device with min. SDK version 14 (or emulator)
 
 
 ## How does it look?
-these are screen shots from the app:
+these are some screenshots from the app:
 
 * ### main page
 #
