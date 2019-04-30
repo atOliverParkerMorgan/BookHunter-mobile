@@ -85,7 +85,7 @@ public class Show extends AppCompatActivity {
             while ((line = bufReader.readLine()) != null) {
 
                 //add element to recycle viewr
-                itemsData.add(new Database(line, R.drawable.ic_search_black_24dp));
+                itemsData.add(new Database(line.substring(0,line.indexOf("#?#")), R.drawable.ic_search_black_24dp));
                 fileoutput.write(line.getBytes());
 
                 //this make sure that the element don't show again

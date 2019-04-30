@@ -135,22 +135,46 @@ public class AlarmReceiver extends BroadcastReceiver {
                             String webpagecontent = doc.toString();
 
 
-                            int index = webpagecontent.lastIndexOf("<style>");
-                            int index2 = webpagecontent.lastIndexOf("</style>");
-                            int index3 = webpagecontent.lastIndexOf("<script>");
-                            int index4 = webpagecontent.lastIndexOf("</script>");
-                            if (index == -1 || index2 == -1) {
-                                Log.d("Error:", "no css on webpage");
-                            } else {
-                                webpagecontent = webpagecontent.substring(0, index) + webpagecontent.substring(index2);
+                        try {
+                            boolean all_js_found = true;
+                            while (all_js_found) {
+
+                                int index = webpagecontent.indexOf("<style>");
+                                int index2 = webpagecontent.indexOf("</style>");
+                                //index = -1 mean it does isn't in doc
+                                if (index == -1 || index2 == -1) {
+                                    all_js_found = false;
+                                } else {
+                                    //remove it
+                                    index = webpagecontent.indexOf("<style>");
+                                    index2 = webpagecontent.indexOf("</style>");
+                                    webpagecontent = webpagecontent.substring(0, index) + webpagecontent.substring(index2);
+                                }
+
                             }
-                            if (index3 == -1 || index4 == -1) {
-                                Log.d("Error:", "no javascript on webpage");
-                            } else {
-                                index3 = webpagecontent.lastIndexOf("<script>");
-                                index4 = webpagecontent.lastIndexOf("</script>");
-                                webpagecontent = webpagecontent.substring(0, index3) + webpagecontent.substring(index4);
+                        }catch (OutOfMemoryError e){
+                            Log.d("ERROR",e.toString());
+                        }try {
+
+                            //repeat until all tags <style> are removed
+                            boolean all_css_found = true;
+                            while (all_css_found) {
+                                int index3 = webpagecontent.indexOf("<script>");
+                                int index4 = webpagecontent.indexOf("</script>");
+
+
+                                if (index3 == -1 || index4 == -1) {
+                                    all_css_found = false;
+                                } else {
+                                    //remove the script from website (if a var contains a key word)
+                                    index3 = webpagecontent.indexOf("<script>");
+                                    index4 = webpagecontent.indexOf("</script>");
+                                    webpagecontent = webpagecontent.substring(0, index3) + webpagecontent.substring(index4);
+                                }
                             }
+                        }catch (OutOfMemoryError e){
+                            Log.d("ERROR",e.toString());
+                        }
                             webpagecontent = webpagecontent.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", " ");
 
                             for (String key : keywords) {

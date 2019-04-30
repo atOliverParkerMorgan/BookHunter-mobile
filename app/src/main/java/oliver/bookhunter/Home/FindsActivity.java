@@ -57,6 +57,9 @@ public class FindsActivity extends AppCompatActivity {
     private double onepercent;
     private double currentpercent;
 
+    //toast error
+    private boolean toast_error = false;
+
 
 
     @Override
@@ -192,7 +195,7 @@ public class FindsActivity extends AppCompatActivity {
 
                 //main loop
                 for (String website : url) {
-
+                   toast_error = false;
                     //get the html as doc
                     Document doc;
 
@@ -203,35 +206,32 @@ public class FindsActivity extends AppCompatActivity {
                     StringBuffer stringBuffer;
 
                     try {
-                            //connect to website and format
-                            doc = Jsoup.connect(website).timeout(60 * 10000).get();
-                            String webpagecontent = doc.toString();
+                        //connect to website and format
+                        doc = Jsoup.connect(website).timeout(60 * 10000).get();
+                        String webpagecontent = doc.toString();
 
-                            //remove css and javascript
-                            int index = webpagecontent.lastIndexOf("<style>");
-                            int index2 = webpagecontent.lastIndexOf("</style>");
-                            int index3 = webpagecontent.lastIndexOf("<script>");
-                            int index4 = webpagecontent.lastIndexOf("</script>");
+                        Log.d("OG Content", webpagecontent);
 
-                            //index = -1 mean it does isn't in doc
-                            if (index == -1 || index2 == -1) {
-                                Log.d("!", "no css on webpage");
-                            } else {
-                                //remove it
-                                webpagecontent = webpagecontent.substring(0, index) + webpagecontent.substring(index2);
+                        //remove css and javascript
+                        while (true) {
+                            if(!webpagecontent.contains("<style")){
+                                break;
+                            }else {
+                                webpagecontent = webpagecontent.replaceAll("(?s)<style.*?</style>", "");
                             }
-                            if (index3 == -1 || index4 == -1) {
-                                Log.d("!", "no javasrcript on webpage");
-                            } else {
-                                //remove the script from website (if a var contains a key word)
-                                index3 = webpagecontent.lastIndexOf("<script>");
-                                index4 = webpagecontent.lastIndexOf("</script>");
-                                webpagecontent = webpagecontent.substring(0, index3) + webpagecontent.substring(index4);
+                        }
+                        while (true) {
+                            if(!webpagecontent.contains("<script")) {
+                                break;
+                            }else {
+                                webpagecontent = webpagecontent.replaceAll("(?s)<script.*?</script>", "");
                             }
 
                             // remove all tags from websites
-                            webpagecontent = webpagecontent.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", " ");
+                        }
+                        webpagecontent = webpagecontent.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", " ");
 
+                            Log.d("WEBCONTENT",webpagecontent);
                             //go throw keywords
                             for (String key : keywords) {
                                 //compare
@@ -314,6 +314,11 @@ public class FindsActivity extends AppCompatActivity {
 
                         @Override
                         public void run() {
+                            //show toast error
+                            if(toast_error){
+                                Toast.makeText(context ,("Error: your device doesn't have enough memory to process: "+url+" (You may get keywords that aren't on the website)"),Toast.LENGTH_LONG).show();
+                            }
+
 
                             //update percentage
                             percent.setText(String.format("%s%%",Double.toString(currentpercent).substring(0,Double.toString(currentpercent).indexOf("."))));

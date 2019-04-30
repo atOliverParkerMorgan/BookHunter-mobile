@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 
 import org.jsoup.nodes.Document;
@@ -100,40 +101,24 @@ public class HomeFragment extends Fragment {
         mDemoView = inflater.inflate(R.layout.fragment_home, container, false);
 
         //USER + DATABASE
+
         // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+        final FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        // Access a Cloud Firestore instance from your Activity
+        //FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
-        //mAuth = FirebaseAuth.getInstance();
-        //final FirebaseUser currentUser = mAuth.getCurrentUser();
-        //Database + Auth
 
 
 
-        //mDatabase = FirebaseDatabase.getInstance().getReference();
-        //oliver.bookhunter.User userData = new User();
-        //mDatabase.push().child(currentUser.getUid()).setValue(userData);
 
 
-        //final TextView user = (TextView) mDemoView.findViewById(R.id.user);
-        //ImageButton reset = (ImageButton) mDemoView.findViewById(R.id.userImage);
-        //user.setText(" "+currentUser.getDisplayName());
-       // reset.setOnClickListener(new View.OnClickListener() {
-        //    @Override
-       //     public void onClick(View v) {
-       //         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-      //                  .requestIdToken(getString(R.string.default_web_client_id))
-       //                 .requestEmail()
-       //                 .build();
-                // [END config_signin]
 
-       //         GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
-       //         mAuth.signOut();
-       //         mGoogleSignInClient.signOut();
-      //          getActivity().finish();
-       //         startActivity(new Intent(getActivity(), GoogleSignInActivity.class));
 
-        //    }
-       // });
+
+
 
 
 

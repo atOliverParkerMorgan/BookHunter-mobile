@@ -218,17 +218,11 @@ public class WebsiteFragment extends Fragment {
 
                 downloadThread.start();
 
-
-
-
-
-
-
-
-
-
-
-
+                try {
+                    downloadThread.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
 
             }
