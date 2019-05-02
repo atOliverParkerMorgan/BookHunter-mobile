@@ -179,7 +179,7 @@ public class FindsActivity extends AppCompatActivity {
                 }
 
                 //main loop
-                for (String website : url) {
+                for (final String website : url) {
 
                     //get the html as doc
                     Document doc;
@@ -210,7 +210,6 @@ public class FindsActivity extends AppCompatActivity {
                         }
                         webpagecontent = webpagecontent.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", " ");
 
-                            Log.d("WEBCONTENT",webpagecontent);
                             //go throw keywords
                             for (String key : keywords) {
                                 //compare
@@ -269,10 +268,16 @@ public class FindsActivity extends AppCompatActivity {
 
                                                     @Override
                                                     public void run() {
-
-                                                        //update percentage
-                                                        percent.setText(String.format("%s%%",Double.toString(currentpercent).substring(0,Double.toString(currentpercent).indexOf("."))));
-
+                                                        Log.d("INDEX",Integer.toString(url.indexOf(website)));
+                                                        Log.d("SIZE",Integer.toString(url.size()));
+                                                        if (url.indexOf(website)+1 == url.size()){
+                                                            //update percentage
+                                                            percent.setText(String.format("%s%%", "100"));
+                                                            bar.setVisibility(View.GONE);
+                                                        }else {
+                                                            //update percentage
+                                                            percent.setText(String.format("%s%%", Double.toString(currentpercent).substring(0, Double.toString(currentpercent).indexOf("."))));
+                                                        }
                                                         // Stuff that updates the UI
                                                         // 1. get a reference to recyclerView
                                                         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.RecyclerView01);
