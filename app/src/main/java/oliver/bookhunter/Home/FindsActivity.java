@@ -1,6 +1,8 @@
 package oliver.bookhunter.Home;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,25 +12,33 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
 import oliver.bookhunter.Database;
+import oliver.bookhunter.Login.GoogleSignInActivity;
 import oliver.bookhunter.MainActivity;
 import oliver.bookhunter.R;
 
@@ -38,8 +48,7 @@ public class FindsActivity extends AppCompatActivity {
     private List<Database>itemsData;
 
     //files
-    private final String file_name = "bookhunter_file";
-    private final String file_name2 = "bookhunter_file2";
+
     private final String file_name3 = "allfinds";
     private final String file_name4 = "newfinds";
 
@@ -57,8 +66,10 @@ public class FindsActivity extends AppCompatActivity {
     private double onepercent;
     private double currentpercent;
 
-    //toast error
-    private boolean toast_error = false;
+    //user + database
+    private FirebaseUser user;
+    private  FirebaseFirestore db;
+
 
 
 
@@ -75,66 +86,46 @@ public class FindsActivity extends AppCompatActivity {
         // this is data for recycler view
         itemsData = new ArrayList<Database>();
 
+        //get user and database instance database
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        db = FirebaseFirestore.getInstance();
 
-        //getting all websites
-        try {
-            String Message;
-            final FileInputStream fileinput = openFileInput(file_name);
+        //getting data from database
+        DocumentReference docRef = db.collection("users").document(user.getUid());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        List<String> AllDATA = (List<String>) document.get("keywords");
 
-            //formatting file
-            InputStreamReader inputStreamReader = new InputStreamReader(fileinput);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            StringBuffer stringBuffer = new StringBuffer();
-            while (((Message = bufferedReader.readLine()) != null)) {
-                stringBuffer.append(Message + "\n");
+                        for(String data: AllDATA){
+                            keywords.add(data);
+                        }
 
+                        AllDATA = (List<String>) document.get("websites");
+
+                        for(String data: AllDATA){
+                            url.add(data);
+                        }
+                        Hunt(getApplicationContext());
+
+
+                    } else {
+                        Alert("Oops","Something went wrong try restarting the app");
+                    }
+                } else {
+                    Alert("Oops","Something went wrong try restarting the app");
+
+                }
             }
-            final BufferedReader bufReader = new BufferedReader(new StringReader(stringBuffer.toString()));
-            String line = null;
-
-            while ((line = bufReader.readLine()) != null) {
-                //adding file content into the url list
-                url.add(line);
-
-            }
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        // getting all keywords
-        try {
-            String Message;
-            final FileInputStream fileinput = openFileInput(file_name2);
-
-            //formatting file
-            InputStreamReader inputStreamReader = new InputStreamReader(fileinput);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            StringBuffer stringBuffer = new StringBuffer();
-            while (((Message = bufferedReader.readLine()) != null)) {
-                stringBuffer.append(Message + "\n");
-
-            }
-            final BufferedReader bufReader = new BufferedReader(new StringReader(stringBuffer.toString()));
-            String line = null;
-
-            while ((line = bufReader.readLine()) != null) {
-                //adding file content into the keywords list
-                keywords.add(line);
-
-            }
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        });
 
 
         //look for books with hunt method
 
-        Hunt(this);
+
 
 
 
@@ -195,7 +186,7 @@ public class FindsActivity extends AppCompatActivity {
 
                 //main loop
                 for (String website : url) {
-                   toast_error = false;
+
                     //get the html as doc
                     Document doc;
 
@@ -210,7 +201,6 @@ public class FindsActivity extends AppCompatActivity {
                         doc = Jsoup.connect(website).timeout(60 * 10000).get();
                         String webpagecontent = doc.toString();
 
-                        Log.d("OG Content", webpagecontent);
 
                         //remove css and javascript
                         while (true) {
@@ -245,53 +235,96 @@ public class FindsActivity extends AppCompatActivity {
                             }
 
 
-                            // format into a file
+                                //getting allfinds from database
+                                final StringBuffer Alltext = new StringBuffer();
 
-                            try {
-                                //get file with all finds
-                                FileOutputStream fileoutput = openFileOutput(file_name3, Context.MODE_APPEND);
-                                fileinput = openFileInput(file_name3);
+                                DocumentReference docRef = db.collection("users").document(user.getUid());
+                                docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            DocumentSnapshot document = task.getResult();
+                                            if (document.exists()) {
+                                                List<String> AllDATA = (List<String>) document.get("finds");
 
-                                //format file
-                                inputStreamReader = new InputStreamReader(fileinput);
-                                bufferedReader = new BufferedReader(inputStreamReader);
-                                StringBuffer Alltext = new StringBuffer();
-                                while (((Message = bufferedReader.readLine()) != null)) {
-                                    Alltext.append(Message + "\n");
+                                                for(String data: AllDATA){
+                                                    Alltext.append(data+"\n");
+                                                }
 
+                                                //check if the file is new or not
+                                                for(String element : finds) {
 
-                                }
+                                                    if(!Alltext.toString().toLowerCase().contains(element.toLowerCase())){
+                                                        // add element to find file since it isn't new anymore
+                                                        db.collection("users").document(user.getUid()).update("finds", FieldValue.arrayUnion(element));
 
+                                                        //format file with no index at the end
+                                                        String newfind = element.substring(0, element.indexOf("#?#"));
 
-
-                                //check if the file is new or not
-                                for(String element : finds) {
-
-                                    if(!Alltext.toString().toLowerCase().contains(element.toLowerCase())){
-                                        // add element to find file since it isn't new anymore
-                                        fileoutput.write((element+'\n').getBytes());
-
-                                        //format file with no index at the end
-                                        String newfind = element.substring(0, element.indexOf("#?#"));
-
-                                        //add it to the recycle viewer
-                                        itemsData.add(new Database(newfind, R.drawable.ic_search_black_24dp));
+                                                        //add it to the recycle viewer
+                                                        itemsData.add(new Database(newfind, R.drawable.ic_search_black_24dp));
 
 
 
 
 
 
+
+
+                                                    }
+
+                                                }
+                                                //add the percentage
+                                                currentpercent += onepercent;
+                                                runOnUiThread(new Runnable() {
+
+                                                    @Override
+                                                    public void run() {
+
+                                                        //update percentage
+                                                        percent.setText(String.format("%s%%",Double.toString(currentpercent).substring(0,Double.toString(currentpercent).indexOf("."))));
+
+                                                        // Stuff that updates the UI
+                                                        // 1. get a reference to recyclerView
+                                                        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.RecyclerView01);
+
+
+                                                        // 2. set layoutManger
+                                                        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                                                        // 3. create an adapter
+                                                        final MyAdapter3 mAdapter = new MyAdapter3(itemsData,context);
+                                                        // 4. set adapter
+                                                        recyclerView.setAdapter(mAdapter);
+                                                        // 5. set item animator to DefaultAnimator
+                                                        recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+                                                        mAdapter.notifyDataSetChanged();
+
+                                                        //hide progress bar at 100%
+                                                        if(currentpercent >=100) {
+
+
+                                                            bar.setVisibility(View.GONE);
+                                                        }
+                                                    }
+                                                });
+
+
+
+
+
+                                            } else {
+                                                Alert("ERROR","You're not logged into any account you try to login or create a new account");
+                                            }
+                                        } else {
+                                            Alert("You're offline","You're not connected to the internet all of your saved websites should be saved after you connect to the internet");
+
+                                        }
                                     }
-
-                                }
-                                fileoutput.close();
+                                });
 
 
 
-                            } catch (FileNotFoundException e) {
-                                e.printStackTrace();
-                                Toast.makeText(context,"There as been an error",Toast.LENGTH_LONG).show();
                             } catch (IOException e) {
                                 e.printStackTrace();
                                 Toast.makeText(context,"There as been an error",Toast.LENGTH_LONG).show();
@@ -300,53 +333,8 @@ public class FindsActivity extends AppCompatActivity {
 
 
                     // not internet / space error
-                    } catch (FileNotFoundException e) {
-                        Toast.makeText(context, "Error: no internet connection / no memory space", Toast.LENGTH_LONG).show();
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        Toast.makeText(context, "Error: no internet connection / no memory space", Toast.LENGTH_LONG).show();
-                    }
-
-                    //add the percentage
-                    currentpercent += onepercent;
-                    runOnUiThread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            //show toast error
-                            if(toast_error){
-                                Toast.makeText(context ,("Error: your device doesn't have enough memory to process: "+url+" (You may get keywords that aren't on the website)"),Toast.LENGTH_LONG).show();
-                            }
 
 
-                            //update percentage
-                            percent.setText(String.format("%s%%",Double.toString(currentpercent).substring(0,Double.toString(currentpercent).indexOf("."))));
-
-                            // Stuff that updates the UI
-                            // 1. get a reference to recyclerView
-                            final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.RecyclerView01);
-
-
-                            // 2. set layoutManger
-                            recyclerView.setLayoutManager(new LinearLayoutManager(context));
-                            // 3. create an adapter
-                            final MyAdapter3 mAdapter = new MyAdapter3(itemsData,context);
-                            // 4. set adapter
-                            recyclerView.setAdapter(mAdapter);
-                            // 5. set item animator to DefaultAnimator
-                            recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-                            mAdapter.notifyDataSetChanged();
-
-                            //hide progress bar at 100%
-                            if(currentpercent >=100) {
-
-
-                                bar.setVisibility(View.GONE);
-                            }
-                        }
-                    });
 
 
 
@@ -362,6 +350,25 @@ public class FindsActivity extends AppCompatActivity {
 
 
 
+    }
+    private void Alert(String Title,String text){
+        new AlertDialog.Builder(this)
+                .setTitle(Title)
+                .setMessage(text)
+
+                // Specifying a listener allows you to take an action before dismissing the dialog.
+                // The dialog is automatically dismissed when a dialog button is clicked.
+                .setPositiveButton(R.string.restart, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Continue with delete operation
+                        startActivity(new Intent(getApplicationContext() , GoogleSignInActivity.class));
+                    }
+                })
+
+                // A null listener allows the button to dismiss the dialog and take no further action.
+                //.setNegativeButton(R.string.continue1, null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
 

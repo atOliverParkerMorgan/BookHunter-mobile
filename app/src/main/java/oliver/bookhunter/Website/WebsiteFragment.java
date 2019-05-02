@@ -1,9 +1,13 @@
 package oliver.bookhunter.Website;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,24 +23,25 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import oliver.bookhunter.Login.GoogleSignInActivity;
 import oliver.bookhunter.R;
 
 public class WebsiteFragment extends Fragment {
@@ -63,6 +68,10 @@ public class WebsiteFragment extends Fragment {
     private List<ItemData> itemsData ;
     //Recycle View
     private DatabaseReference mDatabseRefrence;
+    private MyAdapter mAdapter;
+
+    //ALL DATA from database
+    private List<String> AllDATA;
 
 
     // method if a website exist
@@ -116,95 +125,92 @@ public class WebsiteFragment extends Fragment {
         // this is data fro recycler view
         itemsData = new ArrayList<ItemData>();
 
-        try {
+        //get user and database instance database
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-            // GETTING stings out of file
-            String Message;
-            final FileInputStream fileinput = getContext().openFileInput(file_name);
-            InputStreamReader inputStreamReader = new InputStreamReader(fileinput);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            StringBuffer stringBuffer = new StringBuffer();
-            while (((Message=bufferedReader.readLine())!=null)){
-                stringBuffer.append(Message+"\n");
-
-            }
-            final BufferedReader bufReader = new BufferedReader(new StringReader(stringBuffer.toString()));
-            String line = null;
-            int index = 0;
-            while( (line=bufReader.readLine()) != null ) {
-                itemsData.add(new ItemData(line, R.drawable.ic_delete_black_24dp));
-
-                index++;
-            }
-
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        // 2. set layoutManger
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        // 3. create an adapter
-        final MyAdapter mAdapter = new MyAdapter(itemsData,getActivity());
-        // 4. set adapter
-        recyclerView.setAdapter(mAdapter);
-        // 5. set item animator to DefaultAnimator
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-
-
-
-
-
-        mSubmit.setOnClickListener(new View.OnClickListener() {
+        //getting data from data base
+        DocumentReference docRef = db.collection("users").document(user.getUid());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onClick(View v) {
-                website = mWebsite_text.getText().toString();
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        AllDATA = (List<String>) document.get("websites");
+                        Log.d("ALLDATA",AllDATA.toString());
+                        for(String data: AllDATA){
+                            itemsData.add(new ItemData(data, R.drawable.ic_delete_black_24dp));
+                        }
+                        // 2. set layoutManger
+                        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                        // 3. create an adapter
+                        mAdapter = new MyAdapter(itemsData,getActivity());
+                        // 4. set adapter
+                        recyclerView.setAdapter(mAdapter);
+                        // 5. set item animator to DefaultAnimator
+                        recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-
-                Thread downloadThread = new Thread() {
-                    public void run() {
-                        isawebsite = isServerReachable(getContext(), website);
-                        getActivity().runOnUiThread(new Runnable() {
-
+                        mSubmit.setOnClickListener(new View.OnClickListener() {
                             @Override
-                            public void run() {
+                            public void onClick(View v) {
+                                website = mWebsite_text.getText().toString();
+
+
+                                Thread downloadThread = new Thread() {
+                                    public void run() {
+                                        isawebsite = isServerReachable(getContext(), website);
+                                        getActivity().runOnUiThread(new Runnable() {
+
+                                            @Override
+                                            public void run() {
 
 
 
-                                if(!isawebsite){
+                                                if(!isawebsite){
 
-                                    Toast.makeText(getActivity(), "Error not a website / not connected", Toast.LENGTH_LONG).show();
+                                                    Toast.makeText(getActivity(), "Error not a website / not connected", Toast.LENGTH_LONG).show();
 
-                                }else{
+                                                }else{
 
-                                    mDatabseRefrence = FirebaseDatabase.getInstance().getReference();
+                                                    mDatabseRefrence = FirebaseDatabase.getInstance().getReference();
+                                                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
+                                                    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-                                    //get firebase user
-                                    final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-                                    //get reference
-                                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-
-                                    itemsData.add(new ItemData(website, R.drawable.ic_delete_black_24dp));
-                                    mAdapter.notifyDataSetChanged();
-                                    Toast.makeText(getActivity(), "Saved", Toast.LENGTH_LONG).show();
-
-                                    try {
-                                        FileOutputStream fileoutput = getContext().openFileOutput(file_name, Context.MODE_APPEND);
-                                        website+='\n';
-                                        fileoutput.write(website.getBytes());
-                                        fileoutput.close();
+                                                    db.collection("users").document(user.getUid()).update("websites", FieldValue.arrayUnion(website));
 
 
-                                    } catch (FileNotFoundException e1) {
-                                        e1.printStackTrace();
-                                    } catch (IOException e1) {
-                                        e1.printStackTrace();
+
+
+
+                                                    //get reference
+                                                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+
+                                                    itemsData.add(new ItemData(website, R.drawable.ic_delete_black_24dp));
+                                                    mAdapter.notifyDataSetChanged();
+                                                    Toast.makeText(getActivity(), "Saved", Toast.LENGTH_LONG).show();
+
+                                                }
+
+                                            }
+                                        });
+
+
+
+
                                     }
+
+                                };
+
+                                downloadThread.start();
+
+                                try {
+                                    downloadThread.join();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
                                 }
+
 
                             }
                         });
@@ -212,23 +218,41 @@ public class WebsiteFragment extends Fragment {
 
 
 
+                    } else {
+                        Alert("ERROR","You're not logged into any account you try to login or create a new account");
                     }
+                } else {
+                    Alert("You're offline","You're not connected to the internet all of your saved websites should be saved after you connect to the internet");
 
-                };
-
-                downloadThread.start();
-
-                try {
-                    downloadThread.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
-
-
             }
         });
 
+
+
+
+
+
         return mDemoView;
+    }
+    private void Alert(String Title,String text){
+        new AlertDialog.Builder(getActivity())
+                .setTitle(Title)
+                .setMessage(text)
+
+                // Specifying a listener allows you to take an action before dismissing the dialog.
+                // The dialog is automatically dismissed when a dialog button is clicked.
+                .setPositiveButton(R.string.restart, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Continue with delete operation
+                        startActivity(new Intent(getActivity(), GoogleSignInActivity.class));
+                    }
+                })
+
+                // A null listener allows the button to dismiss the dialog and take no further action.
+                .setNegativeButton(R.string.continue1, null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
 

@@ -36,9 +36,16 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import oliver.bookhunter.MainActivity;
 import oliver.bookhunter.R;
+import oliver.bookhunter.User;
 
 
 /**
@@ -184,21 +191,60 @@ public class GoogleSignInActivity extends BaseActivity implements
                 });
     }
 
-    private void updateUI(FirebaseUser user) {
+    private void updateUI(final FirebaseUser user) {
         hideProgressDialog();
         if (user != null) {
-            this.finish();
-            startActivity(new Intent(GoogleSignInActivity.this, MainActivity.class));
+            final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            DocumentReference docRef = db.collection("users").document(user.getUid());
+            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+
+                            startActivity(new Intent(GoogleSignInActivity.this, MainActivity.class));
+
+                        } else {
+                            Log.d(TAG, "No such document");
+                            //init fields to database
+
+
+                            //check if database is already init
+
+                            List<String> keywords = new ArrayList<String>();
+                            List<String> websites = new ArrayList<String>();
+                            List<String> finds = new ArrayList<String>();
+
+                            //creating user object
+                            User DataUser = new User(keywords, websites, finds);
+                            // add to database
+                            db.collection("users").document(user.getUid()).set(DataUser);
+
+                            startActivity(new Intent(GoogleSignInActivity.this, MainActivity.class));
+                        }
+                    } else {
+                        Log.d(TAG, "get failed with ", task.getException());
+
+                        startActivity(new Intent(GoogleSignInActivity.this, GoogleSignInActivity.class));
+
+                    }
+                }
+
+
+
+
+            });
+
+
+
 
         } else {
-
-
-
             findViewById(R.id.signInButton).setVisibility(View.VISIBLE);
-
         }
     }
-
     @Override
     public void onClick(View v) {
         int i = v.getId();

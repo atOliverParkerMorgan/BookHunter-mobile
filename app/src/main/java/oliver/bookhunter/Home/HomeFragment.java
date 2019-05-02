@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,9 +21,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.jsoup.nodes.Document;
 
@@ -39,6 +44,7 @@ import java.util.Date;
 import java.util.List;
 
 import oliver.bookhunter.Alarm.AlarmReceiver;
+import oliver.bookhunter.Login.GoogleSignInActivity;
 import oliver.bookhunter.R;
 
 
@@ -107,19 +113,7 @@ public class HomeFragment extends Fragment {
         final FirebaseUser currentUser = mAuth.getCurrentUser();
 
         // Access a Cloud Firestore instance from your Activity
-        //FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-
-
-
-
-
-
-
-
-
-
-
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
         Spinner spinner = (Spinner) mDemoView.findViewById(R.id.time_spinner);
@@ -224,6 +218,27 @@ public class HomeFragment extends Fragment {
 
         textView = (TextView)  mDemoView.findViewById(R.id.text);
         mHunt = (Button) mDemoView.findViewById(R.id.Hunt);
+        ImageButton mSign = (ImageButton) mDemoView.findViewById(R.id.SignOut);
+
+        mSign.setOnClickListener(new View.OnClickListener() {
+
+
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(),"SignOut...",Toast.LENGTH_LONG).show();
+                mAuth.signOut();
+                GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestIdToken(getString(R.string.default_web_client_id))
+                        .requestEmail()
+                        .build();
+                GoogleSignInClient mGoogleSignInClient = (GoogleSignInClient) GoogleSignIn.getClient(getActivity(), gso);
+                mGoogleSignInClient.signOut();
+                getActivity().finish();
+                startActivity(new Intent(getActivity(), GoogleSignInActivity.class));
+            }
+
+        });
+
 
         mHunt.setOnClickListener(new View.OnClickListener() {
 

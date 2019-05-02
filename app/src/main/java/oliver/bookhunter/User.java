@@ -8,16 +8,19 @@ import java.util.List;
 public class User {
     private List<String> Keywords;
     private List<String> Websites;
-    private String Uid;
+    private List<String> Finds;
+
+
 
     public User() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public User(List<String> Keywords,List<String> Websites, String Uid) {
+    public User(List<String> Keywords,List<String> Websites, List<String> Finds) {
         this.Websites = Websites;
         this.Keywords = Keywords;
-        this.Uid = Uid;
+        this.Finds = Finds;
+
 
     }
 
@@ -29,7 +32,7 @@ public class User {
         return Websites;
     }
 
-    public String getUid() {
-        return Uid;
+    public List<String> getFinds() {
+        return Finds;
     }
 }
