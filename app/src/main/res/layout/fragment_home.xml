@@ -13,19 +13,12 @@
         android:src= "@drawable/common_google_signin_btn_icon_light"
         android:background="@color/white"
         android:id="@+id/SignOut"
-        android:layout_width="109dp"
-        android:layout_height="65dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="@string/hunt_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:textAllCaps="true"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
          />
     <TextView
@@ -37,7 +30,7 @@
         android:layout_marginLeft="8dp"
         android:id="@+id/username"
         android:text="@string/notLogin"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/SignOut"
         app:layout_constraintTop_toTopOf="parent"
         />
 
