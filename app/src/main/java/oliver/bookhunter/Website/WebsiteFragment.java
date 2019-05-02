@@ -56,8 +56,8 @@ public class WebsiteFragment extends Fragment {
     
 
     private String website;
-    // file where websites are saved
-    private final String file_name = "bookhunter_file";
+
+
     // the linear layout where the websites are shown
     private LinearLayout linearLayout;
 
@@ -219,7 +219,7 @@ public class WebsiteFragment extends Fragment {
 
 
                     } else {
-                        Alert("ERROR","You're not logged into any account you try to login or create a new account");
+                        Alert("ERROR","You're not logged into any account you should try to login or create a new account");
                     }
                 } else {
                     Alert("You're offline","You're not connected to the internet all of your saved websites should be saved after you connect to the internet");

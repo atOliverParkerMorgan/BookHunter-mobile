@@ -59,10 +59,7 @@ public class HomeFragment extends Fragment {
 
     //looking at websites
     private Document document;
-    private final String file_name = "bookhunter_file";
-    private final String file_name2 = "bookhunter_file2";
-    private final String file_name3 = "allfinds";
-    private final String file_name4 = "newfinds";
+
     private  List<String> url = new ArrayList<>();
     private  List<String> keywords = new ArrayList<>();
     //finds

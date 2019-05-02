@@ -9,6 +9,8 @@ public class User {
     private List<String> Keywords;
     private List<String> Websites;
     private List<String> Finds;
+    private List<String> Show;
+    private int spinner;
 
 
 
@@ -16,10 +18,13 @@ public class User {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public User(List<String> Keywords,List<String> Websites, List<String> Finds) {
+    public User(List<String> Keywords,List<String> Websites, List<String> Finds, List<String> Show, int
+                spinner) {
         this.Websites = Websites;
         this.Keywords = Keywords;
         this.Finds = Finds;
+        this.Show = Show;
+        this.spinner = spinner;
 
 
     }
@@ -34,5 +39,13 @@ public class User {
 
     public List<String> getFinds() {
         return Finds;
+    }
+
+    public List<String> getShow() {
+        return Show;
+    }
+
+    public int getSpinner() {
+        return spinner;
     }
 }

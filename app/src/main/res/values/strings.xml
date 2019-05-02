@@ -16,6 +16,7 @@
     <string name="time_text">notify me every: </string>
     <string name="http">http://</string>
     <string name="Login">Login</string>
+    <string name="notLogin">Not Logged in</string>
     <string name="Loading">Loading</string>
     <string name="procent">0%</string>
 

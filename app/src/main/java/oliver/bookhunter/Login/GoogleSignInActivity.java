@@ -217,9 +217,11 @@ public class GoogleSignInActivity extends BaseActivity implements
                             List<String> keywords = new ArrayList<String>();
                             List<String> websites = new ArrayList<String>();
                             List<String> finds = new ArrayList<String>();
+                            List<String> show = new ArrayList<String>();
+                            int spinner = 0;
 
                             //creating user object
-                            User DataUser = new User(keywords, websites, finds);
+                            User DataUser = new User(keywords, websites, finds, show,spinner);
                             // add to database
                             db.collection("users").document(user.getUid()).set(DataUser);
 

@@ -30,10 +30,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,10 +44,7 @@ public class FindsActivity extends AppCompatActivity {
 
     private List<Database>itemsData;
 
-    //files
 
-    private final String file_name3 = "allfinds";
-    private final String file_name4 = "newfinds";
 
     // the list of all the web pages and keywords
     private  List<String> url = new ArrayList<>();
@@ -190,11 +184,6 @@ public class FindsActivity extends AppCompatActivity {
                     //get the html as doc
                     Document doc;
 
-                    String Message;
-                    FileInputStream fileinput;
-                    InputStreamReader inputStreamReader;
-                    BufferedReader bufferedReader;
-                    StringBuffer stringBuffer;
 
                     try {
                         //connect to website and format

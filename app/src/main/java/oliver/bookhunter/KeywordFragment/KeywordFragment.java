@@ -1,7 +1,6 @@
 package oliver.bookhunter.KeywordFragment;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,9 +28,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,8 +43,6 @@ public class KeywordFragment extends Fragment {
     private EditText mKeyword_text;
 
     private String keyword;
-    // file where websites are saved
-    private final String file_name = "bookhunter_file2";
 
     //all keyword
     private List<ItemData2> itemsData ;
@@ -138,18 +132,6 @@ public class KeywordFragment extends Fragment {
 
                                 Toast.makeText(getActivity(), "Saved", Toast.LENGTH_LONG).show();
 
-                                try {
-                                    FileOutputStream fileoutput = getContext().openFileOutput(file_name, Context.MODE_APPEND);
-                                    keyword +='\n';
-                                    fileoutput.write(keyword.getBytes());
-                                    fileoutput.close();
-
-
-                                } catch (FileNotFoundException e1) {
-                                    e1.printStackTrace();
-                                } catch (IOException e1) {
-                                    e1.printStackTrace();
-                                }
                             }
 
                         });
@@ -159,7 +141,7 @@ public class KeywordFragment extends Fragment {
 
 
                     } else {
-                        Alert("ERROR","You're not logged into any account you try to login or create a new account");
+                        Alert("ERROR","You're not logged into any account you should try to login or create a new account");
                     }
                 } else {
                     Alert("You're offline","You're not connected to the internet all of your saved keywords should be saved after you connect to the internet");
