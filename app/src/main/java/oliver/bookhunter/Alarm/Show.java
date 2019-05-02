@@ -97,9 +97,8 @@ public class Show extends AppCompatActivity {
                         //check if the file is new or not
                         for(String element : AllDATA) {
 
-                            if(!Alltext.toString().toLowerCase().contains(element.toLowerCase())){
+
                                 // add element to find file since it isn't new anymore
-                                db.collection("users").document(user.getUid()).update("finds", FieldValue.arrayUnion(element));
                                 db.collection("users").document(user.getUid()).update("show", FieldValue.arrayRemove(element));
 
                                 //format file with no index at the end
@@ -125,7 +124,7 @@ public class Show extends AppCompatActivity {
 
 
 
-                            }
+
 
                         }
 

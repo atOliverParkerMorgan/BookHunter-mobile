@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -103,11 +104,14 @@ public class HomeFragment extends Fragment {
         final ViewGroup mcontainer = container;
         mDemoView = inflater.inflate(R.layout.fragment_home, container, false);
 
-        //USER + DATABASE
+        TextView username = (TextView) mDemoView.findViewById(R.id.username);
+
+
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
         final FirebaseUser currentUser = mAuth.getCurrentUser();
+        username.setText(currentUser.getDisplayName());
 
         // Access a Cloud Firestore instance from your Activity
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -272,6 +276,7 @@ public class HomeFragment extends Fragment {
                 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         //set a alarm
+        Log.d("STARTING ALARM","HERE");
         manager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
         manager.setRepeating(AlarmManager.RTC_WAKEUP, cal_alarm.getTimeInMillis()+interval*1000, interval * 1000, pendingIntent);
 

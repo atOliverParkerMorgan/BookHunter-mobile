@@ -22,7 +22,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +42,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     private List<String> finds = new ArrayList<>();
 
     //string for the found element
-    private String alert;
+    private StringBuilder alert;
 
     //number of found items
     private int alertnum;
@@ -59,42 +58,21 @@ public class AlarmReceiver extends BroadcastReceiver {
         // get a id for each notification
         Random rand = new Random();
         // Obtain a number between [0 - 49].
-        int id = rand.nextInt(999999999);
+        final int id = rand.nextInt(999999999);
 
         //get all the websites from the file
         //getting data from database
         user = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseFirestore.getInstance();
-
-        DocumentReference docRef = db.collection("users").document(user.getUid());
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        List<String> AllDATA = (List<String>) document.get("keywords");
-
-                        for (String data : AllDATA) {
-                            keywords.add(data);
-                        }
-
-                        AllDATA = (List<String>) document.get("websites");
-
-                        for (String data : AllDATA) {
-                            url.add(data);
-                        }
-
-                    }
-                }
-            }
-        });
+        Log.d("USer",user.getUid());
 
 
 
 
 
-        Thread downloadThread = new Thread() {
+
+
+        final Thread downloadThread = new Thread() {
 
             public void run() {
                 //go throw all websites
@@ -130,7 +108,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                         }
                         webpagecontent = webpagecontent.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", " ");
 
-                        Log.d("WEBCONTENT",webpagecontent);
+
                         //go throw keywords
                         for (String key : keywords) {
                             //compare
@@ -195,24 +173,50 @@ public class AlarmReceiver extends BroadcastReceiver {
             }
 
         };
-        downloadThread.start();
+        DocumentReference docRef = db.collection("users").document(user.getUid());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        List<String> AllDATA = (List<String>) document.get("keywords");
+                        Log.d("ALLDATA",AllDATA.toString());
+                        for (String data : AllDATA) {
+                            keywords.add(data);
+                        }
+
+                        AllDATA = (List<String>) document.get("websites");
+
+                        for (String data : AllDATA) {
+                            url.add(data);
+                        }
+                        Log.d("WEBSITES",url.toString());
+                        Log.d("KEYWORD",keywords.toString());
+                        Log.d("finds",finds.toString());
+                        downloadThread.start();
+                        try {
+                            downloadThread.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                    }else{
+                        Log.d("Error","ERROR");
+                    }
+                }else{
+                    Log.d("Error","ERROR");
+                }
+            }
+        });
+
+
 
         //init alert
         alertnum = 0;
-        alert = "";
 
-        //wait for download to finish
-        try {
 
-            downloadThread.join();
-        } catch (InterruptedException e) {
-            Log.d("ERROR", "ERROR");
-            e.printStackTrace();
-        }
 
-        // define
-        String Message;
-        FileInputStream fileinput;
 
         // add to elements to show in Activity Show
         //getting allfinds from database
@@ -226,12 +230,13 @@ public class AlarmReceiver extends BroadcastReceiver {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         List<String> AllDATA = (List<String>) document.get("finds");
-
+                        Log.d("HERE","HERE");
                         for(String data: AllDATA){
-                            Alltext.append(data+"\n");
+                            Alltext.append(data);
                         }
 
                         //check if the file is new or not
+                        alert = new StringBuilder();
                         for(String element : finds) {
 
                             if(!Alltext.toString().toLowerCase().contains(element.toLowerCase())){
@@ -240,48 +245,51 @@ public class AlarmReceiver extends BroadcastReceiver {
                                 db.collection("users").document(user.getUid()).update("show", FieldValue.arrayUnion(element));
                                 alertnum++;
                                 //format file with no index at the end
-                                alert += element.substring(0, element.indexOf("#?#"))+'\n';
+                                alert.append(element.substring(0, element.indexOf("#?#"))+'\n');
 
 
                             }
 
                         }
+                        Log.d("ALLTEXT",Alltext.toString());
+
+
+
+                        //Create notification
+
+                        Intent intent = new Intent(arg0, Show.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        PendingIntent pendingIntent = PendingIntent.getActivity(arg0, 0, intent, 0);
+                        NotificationCompat.Builder builder;
+                        Log.d("Alarmnum",Integer.toString(alertnum));
+                        if (alertnum > 0) {
+                            builder = new NotificationCompat.Builder(arg0, CHANNEL_ID)
+                                    .setSmallIcon(R.drawable.ic_check_box_black_24dp)
+
+
+                                    .setContentTitle(Integer.toString(alertnum)+" new books: ")
+
+                                    .setContentText(alert.toString())
+
+
+                                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                                    // Set the intent that will fire when the user taps the notification
+                                    .setContentIntent(pendingIntent)
+                                    .setAutoCancel(true);
+
+                            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(arg0);
+
+                            // notificationId is a unique int for each notification that you must define
+                            notificationManager.notify(id, builder.build());
+
+
+                        }
+
                     }
 
                 }
             }
         });
-
-
-
-        //Create notification
-
-        Intent intent = new Intent(arg0, Show.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(arg0, 0, intent, 0);
-        NotificationCompat.Builder builder;
-        if (alertnum > 0) {
-            builder = new NotificationCompat.Builder(arg0, CHANNEL_ID)
-                    .setSmallIcon(R.drawable.ic_check_box_black_24dp)
-
-
-                    .setContentTitle(Integer.toString(alertnum)+" new books: ")
-
-                    .setContentText(alert.substring(0,alert.indexOf("#?#")))
-
-
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                    // Set the intent that will fire when the user taps the notification
-                    .setContentIntent(pendingIntent)
-                    .setAutoCancel(true);
-
-            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(arg0);
-
-            // notificationId is a unique int for each notification that you must define
-            notificationManager.notify(id, builder.build());
-
-
-        }
 
     }
 }
