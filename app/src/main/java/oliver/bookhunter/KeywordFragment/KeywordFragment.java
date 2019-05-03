@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,7 +96,8 @@ public class KeywordFragment extends Fragment {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         AllDATA = (List<String>) document.get("keywords");
-                        Log.d("ALLDATA",AllDATA.toString());
+                       java.util.Collections.sort(AllDATA);
+
                         for(String data: AllDATA){
                             itemsData.add(new ItemData2(data, R.drawable.ic_delete_black_24dp));
                         }
@@ -123,7 +123,6 @@ public class KeywordFragment extends Fragment {
                                 FirebaseFirestore db = FirebaseFirestore.getInstance();
 
                                 db.collection("users").document(user.getUid()).update("keywords", FieldValue.arrayUnion(keyword));
-
 
 
                                 //add to the recycle viewer

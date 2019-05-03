@@ -214,7 +214,7 @@ public class FindsActivity extends AppCompatActivity {
                             for (String key : keywords) {
                                 //compare
                                 if (webpagecontent.toLowerCase().contains(key.toLowerCase())) {
-                                    String indexofelement = Integer.toString(webpagecontent.indexOf(key.toLowerCase()));
+                                    String indexofelement = Integer.toString(webpagecontent.toLowerCase().indexOf(key.toLowerCase()));
                                     String find = "Website: " + website + " Keyword: " + key+"#?# " + indexofelement;
 
                                     //we got find => add it to the list
