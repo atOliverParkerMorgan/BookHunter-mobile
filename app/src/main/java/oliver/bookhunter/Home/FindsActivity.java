@@ -63,7 +63,7 @@ public class FindsActivity extends AppCompatActivity {
     //user + database
     private FirebaseUser user;
     private  FirebaseFirestore db;
-
+    private  List<String> add = new ArrayList<>();
 
 
 
@@ -223,55 +223,59 @@ public class FindsActivity extends AppCompatActivity {
                             }
 
 
-                                //getting allfinds from database
-                                final StringBuffer Alltext = new StringBuffer();
+                            //getting allfinds from database
+                            final StringBuffer Alltext = new StringBuffer();
 
-                                DocumentReference docRef = db.collection("users").document(user.getUid());
-                                docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            DocumentReference docRef = db.collection("users").document(user.getUid());
+                            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                         if (task.isSuccessful()) {
                                             DocumentSnapshot document = task.getResult();
                                             if (document.exists()) {
+
                                                 List<String> AllDATA = (List<String>) document.get("finds");
 
+                                                add = new ArrayList<>();
                                                 for(String data: AllDATA){
                                                     Alltext.append(data+"\n");
                                                 }
+                                                try {
+                                                    //check if the file is new or not
+                                                    for (String element : finds) {
 
-                                                //check if the file is new or not
-                                                for(String element : finds) {
+                                                        if (!Alltext.toString().toLowerCase().contains(element.toLowerCase())) {
+                                                            // add element to find file since it isn't new anymore
 
-                                                    if(!Alltext.toString().toLowerCase().contains(element.toLowerCase())){
-                                                        // add element to find file since it isn't new anymore
-                                                        db.collection("users").document(user.getUid()).update("finds", FieldValue.arrayUnion(element));
+                                                            add.add(element);
+                                                            //format file with no index at the end
+                                                            String newfind = element.substring(0, element.indexOf("#?#"));
 
-                                                        //format file with no index at the end
-                                                        String newfind = element.substring(0, element.indexOf("#?#"));
+                                                            //add it to the recycle viewer
+                                                            itemsData.add(new Database(newfind, R.drawable.ic_search_black_24dp));
 
-                                                        //add it to the recycle viewer
-                                                        itemsData.add(new Database(newfind, R.drawable.ic_search_black_24dp));
-
-
-
-
-
-
-
+                                                        }
 
                                                     }
-
+                                                }catch (java.util.ConcurrentModificationException e){
+                                                    e.printStackTrace();
                                                 }
+
+
+
                                                 //add the percentage
                                                 currentpercent += onepercent;
                                                 runOnUiThread(new Runnable() {
 
                                                     @Override
                                                     public void run() {
+
+
                                                         Log.d("INDEX",Integer.toString(url.indexOf(website)));
                                                         Log.d("SIZE",Integer.toString(url.size()));
                                                         if (url.indexOf(website)+1 == url.size()){
                                                             //update percentage
+                                                            //adding all data to database
                                                             percent.setText(String.format("%s%%", "100"));
                                                             bar.setVisibility(View.GONE);
                                                         }else {
@@ -293,13 +297,12 @@ public class FindsActivity extends AppCompatActivity {
                                                         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
                                                         mAdapter.notifyDataSetChanged();
+                                                        for(String element: add){
+                                                            db.collection("users").document(user.getUid()).update("finds", FieldValue.arrayUnion(element));
+                                                        }
 
                                                         //hide progress bar at 100%
-                                                        if(currentpercent >=100) {
 
-
-                                                            bar.setVisibility(View.GONE);
-                                                        }
                                                     }
                                                 });
 

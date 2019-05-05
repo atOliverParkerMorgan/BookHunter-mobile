@@ -10,7 +10,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,11 +28,12 @@ import java.util.List;
 
 import oliver.bookhunter.Database;
 import oliver.bookhunter.Home.MyAdapter3;
+import oliver.bookhunter.Login.BaseActivity;
 import oliver.bookhunter.Login.GoogleSignInActivity;
 import oliver.bookhunter.MainActivity;
 import oliver.bookhunter.R;
 
-public class Show extends AppCompatActivity {
+public class Show extends BaseActivity {
 
 
     private List<Database>itemsData;
@@ -57,7 +57,7 @@ public class Show extends AppCompatActivity {
 
         setContentView(R.layout.finds);
 
-
+        showProgressDialog();
         procent = (TextView) findViewById(R.id.procent);
         bar = (ProgressBar) findViewById(R.id.progressBar);
         ImageButton exit = (ImageButton) findViewById(R.id.exit);
@@ -94,6 +94,7 @@ public class Show extends AppCompatActivity {
                         }
                         AllDATA = (List<String>) document.get("show");
 
+                        hideProgressDialog();
                         //check if the file is new or not
                         for(String element : AllDATA) {
 
@@ -106,6 +107,7 @@ public class Show extends AppCompatActivity {
 
                                 //add it to the recycle viewer
                                 itemsData.add(new Database(newfind, R.drawable.ic_search_black_24dp));
+                                db.collection("users").document(user.getUid()).update("finds", FieldValue.arrayUnion(element));
                                 // Stuff that updates the UI
                                 // 1. get a reference to recyclerView
                                 final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.RecyclerView01);
@@ -160,6 +162,8 @@ public class Show extends AppCompatActivity {
 
 
     }
+
+
     private void Alert(String Title,String text){
         new AlertDialog.Builder(this)
                 .setTitle(Title)

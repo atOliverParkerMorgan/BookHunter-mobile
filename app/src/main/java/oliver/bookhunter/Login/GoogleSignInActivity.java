@@ -194,6 +194,10 @@ public class GoogleSignInActivity extends BaseActivity implements
     private void updateUI(final FirebaseUser user) {
         hideProgressDialog();
         if (user != null) {
+            // [START_EXCLUDE silent]
+            showProgressDialog();
+            // [END_EXCLUDE] // [START_EXCLUDE silent]
+
             final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
             DocumentReference docRef = db.collection("users").document(user.getUid());

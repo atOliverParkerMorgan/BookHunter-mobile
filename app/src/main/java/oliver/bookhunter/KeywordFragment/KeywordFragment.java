@@ -96,7 +96,7 @@ public class KeywordFragment extends Fragment {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         AllDATA = (List<String>) document.get("keywords");
-                       java.util.Collections.sort(AllDATA);
+                        java.util.Collections.sort(AllDATA);
 
                         for(String data: AllDATA){
                             itemsData.add(new ItemData2(data, R.drawable.ic_delete_black_24dp));
