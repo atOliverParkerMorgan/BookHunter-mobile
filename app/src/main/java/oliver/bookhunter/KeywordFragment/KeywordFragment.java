@@ -21,7 +21,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
@@ -34,8 +33,6 @@ import oliver.bookhunter.Login.GoogleSignInActivity;
 import oliver.bookhunter.R;
 
 public class KeywordFragment extends Fragment {
-    // the fragment view
-    private View mDemoView;
 
     private Button mSubmit;
     // add keyword text
@@ -47,18 +44,18 @@ public class KeywordFragment extends Fragment {
     private List<ItemData2> itemsData ;
     //Recycle View
 
-    //Datbase
-    private DatabaseReference mDatabase;
+
     //ALL DATA from database
     private List<String> AllDATA;
 
-    //Account
-    private FirebaseAuth mAuth;
+
+
 
     // Adapter
     private oliver.bookhunter.KeywordFragment.MyAdapter2 mAdapter;
 
-
+    public KeywordFragment() {
+    }
 
 
     @Override
@@ -66,34 +63,36 @@ public class KeywordFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         //get main view
-        mDemoView = inflater.inflate(R.layout.fragment_keyword, container, false);
+        // the fragment view
+        View mDemoView = inflater.inflate(R.layout.fragment_keyword, container, false);
 
-        mSubmit = (Button) mDemoView.findViewById(R.id.submit);
+        mSubmit = mDemoView.findViewById(R.id.submit);
         //input text
-        mKeyword_text = (EditText) mDemoView.findViewById(R.id.website_new);
+        mKeyword_text = mDemoView.findViewById(R.id.website_new);
         //linearLayout were the keyword text is displayed
 
 
         //Arrays
 
         // 1. get a reference to recyclerView
-        final RecyclerView recyclerView = (RecyclerView) mDemoView.findViewById(R.id.RecyclerView01);
+        final RecyclerView recyclerView = mDemoView.findViewById(R.id.RecyclerView01);
 
         // this is data fro recycler view
-        itemsData = new ArrayList<ItemData2>();
-        final List<Object> Data = new ArrayList<Object>();
+        itemsData = new ArrayList<>();
 
         //get user and database instance database
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         //getting data from data base
+        assert user != null;
         DocumentReference docRef = db.collection("users").document(user.getUid());
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
+                    assert document != null;
                     if (document.exists()) {
                         AllDATA = (List<String>) document.get("keywords");
                         java.util.Collections.sort(AllDATA);
@@ -122,6 +121,7 @@ public class KeywordFragment extends Fragment {
                                 final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                 FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+                                assert user != null;
                                 db.collection("users").document(user.getUid()).update("keywords", FieldValue.arrayUnion(keyword));
 
 

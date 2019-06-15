@@ -55,11 +55,8 @@
 
     <string name="continue1">continue</string>
     <string name="restart">restart app</string>
-
-
-
-
-
+    <string name="description">image</string>
+    <string name="icon">icon</string>
 
 
 </resources>

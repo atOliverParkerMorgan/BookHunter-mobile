@@ -1,26 +1,9 @@
-/**
- * Copyright 2016 Google Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package oliver.bookhunter.Login;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
@@ -62,8 +45,9 @@ public class GoogleSignInActivity extends BaseActivity implements
     // [END declare_auth]
 
     private GoogleSignInClient mGoogleSignInClient;
-    private TextView mStatusTextView;
-    private TextView mDetailTextView;
+
+    public GoogleSignInActivity() {
+    }
 
 
     @Override
@@ -112,6 +96,7 @@ public class GoogleSignInActivity extends BaseActivity implements
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
+                assert account != null;
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
@@ -163,34 +148,6 @@ public class GoogleSignInActivity extends BaseActivity implements
     }
     // [END signin]
 
-    private void signOut() {
-        // Firebase sign out
-        mAuth.signOut();
-
-        // Google sign out
-        mGoogleSignInClient.signOut().addOnCompleteListener(this,
-                new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        updateUI(null);
-                    }
-                });
-    }
-
-    private void revokeAccess() {
-        // Firebase sign out
-        mAuth.signOut();
-
-        // Google revoke access
-        mGoogleSignInClient.revokeAccess().addOnCompleteListener(this,
-                new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        updateUI(null);
-                    }
-                });
-    }
-
     private void updateUI(final FirebaseUser user) {
         hideProgressDialog();
         if (user != null) {
@@ -206,6 +163,7 @@ public class GoogleSignInActivity extends BaseActivity implements
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
+                        assert document != null;
                         if (document.exists()) {
                             Log.d(TAG, "DocumentSnapshot data: " + document.getData());
 
@@ -218,10 +176,13 @@ public class GoogleSignInActivity extends BaseActivity implements
 
                             //check if database is already init
 
-                            List<String> keywords = new ArrayList<String>();
-                            List<String> websites = new ArrayList<String>();
-                            List<String> finds = new ArrayList<String>();
-                            List<String> show = new ArrayList<String>();
+                            List<String> keywords;
+                            keywords = new ArrayList<>();
+                            List<String> websites;
+                            websites = new ArrayList<>();
+                            List<String> finds;
+                            finds = new ArrayList<>();
+                            List<String> show = new ArrayList<>();
 
 
                             //creating user object

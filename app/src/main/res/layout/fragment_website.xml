@@ -42,7 +42,7 @@
         app:layout_constraintBottom_toTopOf="@+id/submit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-         />
+        android:autofillHints="" tools:targetApi="o"/>
 
 
     <Button

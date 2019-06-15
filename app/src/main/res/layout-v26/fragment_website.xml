@@ -2,6 +2,7 @@
 
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/db1_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="0"
         android:gravity="center"
-        android:text="@string/Finds_title"
+        android:text="@string/Website_title"
         android:textAppearance="?android:attr/textAppearanceLarge"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -28,43 +29,33 @@
         app:layout_constraintTop_toBottomOf="@id/textView1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/exit"/>
+        app:layout_constraintBottom_toTopOf="@+id/website_new"/>
 
 
-    <ImageButton
-        android:id="@+id/exit"
+    <EditText
+
+        android:id="@+id/website_new"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/hint_website"
+        android:inputType="textNoSuggestions"
+        app:layout_constraintBottom_toTopOf="@+id/submit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:autofillHints="" />
+
+
+    <Button
+        android:id="@+id/submit"
         style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_arrow_back_black_24dp"
-        android:background="@color/white"
-        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/Submit"
         app:layout_constraintBottom_toBottomOf="parent"
-
-        android:contentDescription="@string/description" />
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/procent"
-        android:visibility="visible"
-        />
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-        android:id="@+id/procent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/procent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-

@@ -52,7 +52,6 @@ public class FindsActivity extends AppCompatActivity {
 
     //finds
     private List<String> finds = new ArrayList<>();
-    private List<String> newfinds = new ArrayList<>();
 
     //Progressbar + percent textview
     private ProgressBar bar;
@@ -73,12 +72,12 @@ public class FindsActivity extends AppCompatActivity {
 
         setContentView(R.layout.finds);
 
-        percent = (TextView) findViewById(R.id.procent);
-        bar = (ProgressBar) findViewById(R.id.progressBar);
-        ImageButton exit = (ImageButton) findViewById(R.id.exit);
+        percent = findViewById(R.id.procent);
+        bar = findViewById(R.id.progressBar);
+        ImageButton exit = findViewById(R.id.exit);
 
         // this is data for recycler view
-        itemsData = new ArrayList<Database>();
+        itemsData = new ArrayList<>();
 
         //get user and database instance database
         user = FirebaseAuth.getInstance().getCurrentUser();
@@ -91,18 +90,17 @@ public class FindsActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
+                    assert document != null;
                     if (document.exists()) {
                         List<String> AllDATA = (List<String>) document.get("keywords");
 
-                        for(String data: AllDATA){
-                            keywords.add(data);
-                        }
+                        assert AllDATA != null;
+                        keywords.addAll(AllDATA);
 
                         AllDATA = (List<String>) document.get("websites");
 
-                        for(String data: AllDATA){
-                            url.add(data);
-                        }
+                        assert AllDATA != null;
+                        url.addAll(AllDATA);
                         Hunt(getApplicationContext());
 
 
@@ -234,13 +232,15 @@ public class FindsActivity extends AppCompatActivity {
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                         if (task.isSuccessful()) {
                                             DocumentSnapshot document = task.getResult();
+                                            assert document != null;
                                             if (document.exists()) {
 
                                                 List<String> AllDATA = (List<String>) document.get("finds");
 
                                                 add = new ArrayList<>();
+                                                assert AllDATA != null;
                                                 for(String data: AllDATA){
-                                                    Alltext.append(data+"\n");
+                                                    Alltext.append(data).append("\n");
                                                 }
                                                 try {
                                                     //check if the file is new or not
@@ -287,7 +287,7 @@ public class FindsActivity extends AppCompatActivity {
                                                         }
                                                         // Stuff that updates the UI
                                                         // 1. get a reference to recyclerView
-                                                        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.RecyclerView01);
+                                                        final RecyclerView recyclerView = findViewById(R.id.RecyclerView01);
 
 
                                                         // 2. set layoutManger

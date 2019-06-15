@@ -39,11 +39,6 @@ public class Show extends BaseActivity {
     private List<Database>itemsData;
 
 
-
-    //Progressbar (will be set to invisible)
-    private ProgressBar bar;
-    private TextView procent;
-
     //user + database
     private FirebaseUser user;
     private FirebaseFirestore db;
@@ -58,12 +53,13 @@ public class Show extends BaseActivity {
         setContentView(R.layout.finds);
 
         showProgressDialog();
-        procent = (TextView) findViewById(R.id.procent);
-        bar = (ProgressBar) findViewById(R.id.progressBar);
-        ImageButton exit = (ImageButton) findViewById(R.id.exit);
+        TextView procent = findViewById(R.id.procent);
+        //Progressbar (will be set to invisible)
+        ProgressBar bar = findViewById(R.id.progressBar);
+        ImageButton exit = findViewById(R.id.exit);
 
         // this is data for recycler view
-        itemsData = new ArrayList<Database>();
+        itemsData = new ArrayList<>();
 
         //getting rid of bar
         bar.setVisibility(View.GONE);
@@ -73,7 +69,6 @@ public class Show extends BaseActivity {
         // going throw show file
         // and adding all element to find file
         //getting allfinds from database
-        final StringBuffer Alltext = new StringBuffer();
 
 
         //get user and database instance database
@@ -86,12 +81,14 @@ public class Show extends BaseActivity {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
+                    assert document != null;
                     if (document.exists()) {
 
                         List<String> AllDATA = (List<String>) document.get("show");
 
                         hideProgressDialog();
                         //check if the file is new or not
+                        assert AllDATA != null;
                         for(String element : AllDATA) {
 
 
@@ -106,7 +103,7 @@ public class Show extends BaseActivity {
                                 db.collection("users").document(user.getUid()).update("finds", FieldValue.arrayUnion(element));
                                 // Stuff that updates the UI
                                 // 1. get a reference to recyclerView
-                                final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.RecyclerView01);
+                                final RecyclerView recyclerView = findViewById(R.id.RecyclerView01);
 
 
                                 // 2. set layoutManger

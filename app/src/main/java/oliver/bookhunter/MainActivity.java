@@ -10,8 +10,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -20,7 +18,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import oliver.bookhunter.Home.HomeFragment;
 import oliver.bookhunter.KeywordFragment.KeywordFragment;
-import oliver.bookhunter.Login.Profile;
 import oliver.bookhunter.Website.WebsiteFragment;
 
 
@@ -32,9 +29,6 @@ public class MainActivity extends AppCompatActivity {
     private FragmentManager mFragmentManager;
     private FragmentTransaction mFragmentTransaction;
     private Fragment mSelectedFragment;
-
-    // profile object
-    private Profile tempProfile;
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -73,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,8 +76,6 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        //get firebase user
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         //get reference
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
@@ -93,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         //grab info
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 //this is my user_class Class
 
 //                    Log.i("TEST", tempProfile.getEmail() + ": " + dataSnapshot.child(tempProfile.getEmail()).getValue());
@@ -101,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
 

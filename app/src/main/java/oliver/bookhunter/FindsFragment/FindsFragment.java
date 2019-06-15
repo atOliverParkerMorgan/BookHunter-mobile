@@ -96,6 +96,7 @@ public class FindsFragment extends Fragment {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
+                    assert document != null;
                     if (document.exists()) {
                         AllDATA = (List<String>) document.get("keywords");
                         java.util.Collections.sort(AllDATA);
@@ -124,6 +125,7 @@ public class FindsFragment extends Fragment {
                                 final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                 FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+                                assert user != null;
                                 db.collection("users").document(user.getUid()).update("keywords", FieldValue.arrayUnion(keyword));
 
 

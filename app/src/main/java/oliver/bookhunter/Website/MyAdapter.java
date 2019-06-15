@@ -1,5 +1,6 @@
 package oliver.bookhunter.Website;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,34 +31,35 @@ import oliver.bookhunter.R;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private List<ItemData> itemsData;
+    @SuppressLint("StaticFieldLeak")
     public static Context context;
 
 
 
-    public MyAdapter(List<ItemData> itemsData, Context context) {
+    MyAdapter(List<ItemData> itemsData, Context context) {
         this.itemsData = itemsData;
-        this.context = context;
+        MyAdapter.context = context;
     }
 
     // Create new views (invoked by the layout manager)
 
 
+    @NonNull
     @Override
-    public MyAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
+    public MyAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent,
                                                    int viewType) {
         // create a new view
-        View itemLayoutView = LayoutInflater.from(parent.getContext())
+        @SuppressLint("InflateParams") View itemLayoutView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.webistetextview, null);
 
         // create ViewHolder
 
-        ViewHolder viewHolder = new ViewHolder(itemLayoutView);
-        return viewHolder;
+        return new ViewHolder(itemLayoutView);
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(final ViewHolder viewHolder, final int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder viewHolder, final int position) {
 
         // - get data from your itemsData at this position
         // - replace the contents of the view with that itemsData
@@ -74,6 +77,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
                 // Delete the from database
+                assert user != null;
                 db.collection("users").document(user.getUid()).update("websites", FieldValue.arrayRemove(itemsData.get(position).getTitle()));
 
                 itemsData.remove(position);  // remove the item from list
@@ -89,19 +93,18 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
 
     // inner class to hold a reference to each item of RecyclerView
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView txtViewTitle;
-        public ImageButton imgViewIcon;
-        public ViewHolder vimgViewIcon;
+        TextView txtViewTitle;
+        ImageButton imgViewIcon;
 
 
-        public ViewHolder(View itemLayoutView) {
+        ViewHolder(View itemLayoutView) {
             super(itemLayoutView);
 
 
-            txtViewTitle = (TextView) itemLayoutView.findViewById(R.id.item_title);
-            imgViewIcon = (ImageButton) itemLayoutView.findViewById(R.id.item_icon);
+            txtViewTitle = itemLayoutView.findViewById(R.id.item_title);
+            imgViewIcon = itemLayoutView.findViewById(R.id.item_icon);
 
 
 
@@ -115,7 +118,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     public int getItemCount() {
         return itemsData.size();
     }
-    public void delete(String delete){
+    private void delete(String delete){
         String file_name = "bookhunter_file";
         this.notifyDataSetChanged();
 
@@ -124,13 +127,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             final FileInputStream fileinput = context.openFileInput(file_name);
             InputStreamReader inputStreamReader = new InputStreamReader(fileinput);
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            StringBuffer stringBuffer = new StringBuffer();
+            StringBuilder stringBuffer = new StringBuilder();
             while (((Message = bufferedReader.readLine()) != null)) {
-                stringBuffer.append(Message + "\n");
+                stringBuffer.append(Message).append("\n");
 
             }
             final BufferedReader bufReader = new BufferedReader(new StringReader(stringBuffer.toString()));
-            String line = null;
+            String line;
             FileOutputStream fileoutput = context.openFileOutput(file_name, Context.MODE_PRIVATE);
             while ((line = bufReader.readLine()) != null) {
                 Log.d("text", line);

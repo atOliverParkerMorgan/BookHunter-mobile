@@ -155,16 +155,14 @@ public class AlarmReceiver extends BroadcastReceiver {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         List<String> AllDATA = (List<String>) document.get("keywords");
+                        assert AllDATA != null;
                         Log.d("ALLDATA",AllDATA.toString());
-                        for (String data : AllDATA) {
-                            keywords.add(data);
-                        }
+                        keywords.addAll(AllDATA);
 
                         AllDATA = (List<String>) document.get("websites");
 
-                        for (String data : AllDATA) {
-                            url.add(data);
-                        }
+                        assert AllDATA != null;
+                        url.addAll(AllDATA);
                         Log.d("WEBSITES",url.toString());
                         Log.d("KEYWORD",keywords.toString());
                         Log.d("finds",finds.toString());
@@ -202,9 +200,11 @@ public class AlarmReceiver extends BroadcastReceiver {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
+                    assert document != null;
                     if (document.exists()) {
                         List<String> AllDATA = (List<String>) document.get("finds");
                         Log.d("HERE","HERE");
+                        assert AllDATA != null;
                         for(String data: AllDATA){
                             Alltext.append(data);
                         }
@@ -220,7 +220,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                                     db.collection("users").document(user.getUid()).update("show", FieldValue.arrayUnion(element));
                                     alertnum++;
                                     //format file with no index at the end
-                                    alert.append(element.substring(0, element.indexOf("#?#")) + '\n');
+                                    alert.append(element.substring(0, element.indexOf("#?#"))).append('\n');
 
 
                                 }
@@ -245,7 +245,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                                     .setSmallIcon(R.drawable.ic_check_box_black_24dp)
 
 
-                                    .setContentTitle(Integer.toString(alertnum)+" new books: ")
+                                    .setContentTitle(alertnum +" new books: ")
 
                                     .setContentText(alert.toString())
 

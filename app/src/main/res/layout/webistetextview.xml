@@ -17,9 +17,9 @@
         android:layout_marginRight="8dp"
         android:layout_marginTop="1dp"
         android:layout_marginBottom="1dp"
-        android:contentDescription="icon"
+        android:contentDescription="@string/icon"
         app:srcCompat="@drawable/ic_delete_black_24dp"
-        />
+        android:layout_alignParentEnd="true" />
 
     <!-- title -->
     <TextView
@@ -32,6 +32,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
-        android:textSize="22dp" />
+        android:textSize="22sp"
+        android:layout_toStartOf="@+id/item_icon" />
 
 </RelativeLayout>

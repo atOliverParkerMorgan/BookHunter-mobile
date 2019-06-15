@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,11 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,8 +27,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
@@ -40,15 +38,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import oliver.bookhunter.Login.GoogleSignInActivity;
 import oliver.bookhunter.R;
 
 public class WebsiteFragment extends Fragment {
-    // the fragment view
-    private View mDemoView;
-    // the Website text
-    private TextView mDemoTextView;
 
     private Button mSubmit;
     // add website text
@@ -58,24 +53,23 @@ public class WebsiteFragment extends Fragment {
     private String website;
 
 
-    // the linear layout where the websites are shown
-    private LinearLayout linearLayout;
-
     //check if a website exist
     private boolean isawebsite;
 
     //all website
     private List<ItemData> itemsData ;
-    //Recycle View
-    private DatabaseReference mDatabseRefrence;
     private MyAdapter mAdapter;
 
     //ALL DATA from database
     private List<String> AllDATA;
 
+    public WebsiteFragment() {
+        // the Website text
+    }
+
 
     // method if a website exist
-    static public boolean isServerReachable(Context context,String url) {
+    private static boolean isServerReachable(Context context, String url) {
         ConnectivityManager connMan = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = connMan.getActiveNetworkInfo();
         if (netInfo != null && netInfo.isConnected()) {
@@ -108,11 +102,12 @@ public class WebsiteFragment extends Fragment {
 
 
         //get main view
-        mDemoView = inflater.inflate(R.layout.fragment_website, container, false);
+        // the fragment view
+        View mDemoView = inflater.inflate(R.layout.fragment_website, container, false);
 
-        mSubmit = (Button) mDemoView.findViewById(R.id.submit);
+        mSubmit = mDemoView.findViewById(R.id.submit);
         //input text
-        mWebsite_text = (EditText) mDemoView.findViewById(R.id.website_new);
+        mWebsite_text = mDemoView.findViewById(R.id.website_new);
         //linearLayout were the website text is displayed
 
 
@@ -120,24 +115,27 @@ public class WebsiteFragment extends Fragment {
         //Arrays
 
         // 1. get a reference to recyclerView
-        final RecyclerView recyclerView = (RecyclerView) mDemoView.findViewById(R.id.RecyclerView01);
+        final RecyclerView recyclerView = mDemoView.findViewById(R.id.RecyclerView01);
 
         // this is data fro recycler view
-        itemsData = new ArrayList<ItemData>();
+        itemsData = new ArrayList<>();
 
         //get user and database instance database
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         //getting data from data base
+        assert user != null;
         DocumentReference docRef = db.collection("users").document(user.getUid());
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
+                    assert document != null;
                     if (document.exists()) {
                         AllDATA = (List<String>) document.get("websites");
+                        assert AllDATA != null;
                         Log.d("ALLDATA",AllDATA.toString());
                         for(String data: AllDATA){
                             itemsData.add(new ItemData(data, R.drawable.ic_delete_black_24dp));
@@ -158,9 +156,10 @@ public class WebsiteFragment extends Fragment {
 
 
                                 Thread downloadThread = new Thread() {
+                                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                                     public void run() {
-                                        isawebsite = isServerReachable(getContext(), website);
-                                        getActivity().runOnUiThread(new Runnable() {
+                                        isawebsite = isServerReachable(Objects.requireNonNull(getContext()), website);
+                                        Objects.requireNonNull(getActivity()).runOnUiThread(new Runnable() {
 
                                             @Override
                                             public void run() {
@@ -173,11 +172,11 @@ public class WebsiteFragment extends Fragment {
 
                                                 }else{
 
-                                                    mDatabseRefrence = FirebaseDatabase.getInstance().getReference();
                                                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
                                                     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+                                                    assert user != null;
                                                     db.collection("users").document(user.getUid()).update("websites", FieldValue.arrayUnion(website));
 
 
@@ -185,7 +184,6 @@ public class WebsiteFragment extends Fragment {
 
 
                                                     //get reference
-                                                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
 
                                                     itemsData.add(new ItemData(website, R.drawable.ic_delete_black_24dp));
                                                     mAdapter.notifyDataSetChanged();

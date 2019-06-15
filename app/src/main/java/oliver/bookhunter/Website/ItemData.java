@@ -6,7 +6,7 @@ public class ItemData {
     private String title;
     private int imageUrl;
 
-    public ItemData(String title,int imageUrl){
+    ItemData(String title, int imageUrl){
 
         this.title = title;
         this.imageUrl = imageUrl;
@@ -14,7 +14,7 @@ public class ItemData {
     public String getTitle(){
         return this.title;
     }
-    public int getImageUrl(){
+    int getImageUrl(){
         return this.imageUrl;
     }
     // getters & setters
