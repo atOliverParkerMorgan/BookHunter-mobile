@@ -87,12 +87,8 @@ public class Show extends BaseActivity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        List<String> AllDATA = (List<String>) document.get("finds");
 
-                        for(String data: AllDATA){
-                            Alltext.append(data+"\n");
-                        }
-                        AllDATA = (List<String>) document.get("show");
+                        List<String> AllDATA = (List<String>) document.get("show");
 
                         hideProgressDialog();
                         //check if the file is new or not

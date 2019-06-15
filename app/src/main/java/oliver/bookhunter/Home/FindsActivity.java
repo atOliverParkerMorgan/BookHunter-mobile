@@ -214,7 +214,9 @@ public class FindsActivity extends AppCompatActivity {
                             for (String key : keywords) {
                                 //compare
                                 if (webpagecontent.toLowerCase().contains(key.toLowerCase())) {
-                                    String indexofelement = Integer.toString(webpagecontent.toLowerCase().indexOf(key.toLowerCase()));
+                                    int wordindex = webpagecontent.toLowerCase().indexOf(key.toLowerCase())+key.length();
+                                    String indexofelement = webpagecontent.toLowerCase().substring(wordindex,wordindex+10);
+
                                     String find = "Website: " + website + " Keyword: " + key+"#?# " + indexofelement;
 
                                     //we got find => add it to the list
@@ -246,6 +248,7 @@ public class FindsActivity extends AppCompatActivity {
 
                                                         if (!Alltext.toString().toLowerCase().contains(element.toLowerCase())) {
                                                             // add element to find file since it isn't new anymore
+                                                            db.collection("users").document(user.getUid()).update("finds", FieldValue.arrayUnion(element));
 
                                                             add.add(element);
                                                             //format file with no index at the end
@@ -297,9 +300,7 @@ public class FindsActivity extends AppCompatActivity {
                                                         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
                                                         mAdapter.notifyDataSetChanged();
-                                                        for(String element: add){
-                                                            db.collection("users").document(user.getUid()).update("finds", FieldValue.arrayUnion(element));
-                                                        }
+
 
                                                         //hide progress bar at 100%
 

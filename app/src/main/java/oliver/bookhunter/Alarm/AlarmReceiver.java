@@ -113,7 +113,9 @@ public class AlarmReceiver extends BroadcastReceiver {
                         for (String key : keywords) {
                             //compare
                             if (webpagecontent.toLowerCase().contains(key.toLowerCase())) {
-                                String indexofelement = Integer.toString(webpagecontent.toLowerCase().indexOf(key.toLowerCase()));
+                                int wordindex = webpagecontent.toLowerCase().indexOf(key.toLowerCase())+key.length();
+                                String indexofelement = webpagecontent.toLowerCase().substring(wordindex,wordindex+5);
+
                                 String find = "Website: " + website + " Keyword: " + key+"#?# " + indexofelement;
 
                                 //we got find => add it to the list
@@ -122,34 +124,6 @@ public class AlarmReceiver extends BroadcastReceiver {
                         }
 
 
-                        //getting allfinds from database
-                        final StringBuffer Alltext = new StringBuffer();
-
-                        DocumentReference docRef = db.collection("users").document(user.getUid());
-                        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    DocumentSnapshot document = task.getResult();
-                                    if (document.exists()) {
-                                        List<String> AllDATA = (List<String>) document.get("finds");
-
-                                        for (String data : AllDATA) {
-                                            Alltext.append(data + "\n");
-                                        }
-
-
-
-
-
-
-                                    }
-                                }
-
-
-
-                            }
-                        });
 
 
 
@@ -237,19 +211,23 @@ public class AlarmReceiver extends BroadcastReceiver {
 
                         //check if the file is new or not
                         alert = new StringBuilder();
-                        for(String element : finds) {
+                        try {
+                            for (String element : finds) {
 
-                            if(!Alltext.toString().toLowerCase().contains(element.toLowerCase())){
-                                // add element to find file since it isn't new anymore
-                                db.collection("users").document(user.getUid()).update("finds", FieldValue.arrayUnion(element));
-                                db.collection("users").document(user.getUid()).update("show", FieldValue.arrayUnion(element));
-                                alertnum++;
-                                //format file with no index at the end
-                                alert.append(element.substring(0, element.indexOf("#?#"))+'\n');
+                                if (!Alltext.toString().toLowerCase().contains(element.toLowerCase())) {
+                                    // add element to find file since it isn't new anymore
+                                    db.collection("users").document(user.getUid()).update("finds", FieldValue.arrayUnion(element));
+                                    db.collection("users").document(user.getUid()).update("show", FieldValue.arrayUnion(element));
+                                    alertnum++;
+                                    //format file with no index at the end
+                                    alert.append(element.substring(0, element.indexOf("#?#")) + '\n');
 
+
+                                }
 
                             }
-
+                        }catch (java.util.ConcurrentModificationException e){
+                        e.printStackTrace();
                         }
                         Log.d("ALLTEXT",Alltext.toString());
 

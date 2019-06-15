@@ -1,8 +1,6 @@
 package oliver.bookhunter;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
@@ -20,16 +18,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Map;
-
 import oliver.bookhunter.Home.HomeFragment;
 import oliver.bookhunter.KeywordFragment.KeywordFragment;
 import oliver.bookhunter.Login.Profile;
@@ -44,10 +32,6 @@ public class MainActivity extends AppCompatActivity {
     private FragmentManager mFragmentManager;
     private FragmentTransaction mFragmentTransaction;
     private Fragment mSelectedFragment;
-
-    //filenames
-    private final String file_name = "bookhunter_file2";
-    private final String file_name2 = "bookhunter_file";
 
     // profile object
     private Profile tempProfile;
@@ -130,21 +114,6 @@ public class MainActivity extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
 
-       // ref = FirebaseDatabase.getInstance().getReference().child(tempProfile.getName());
-        ref.addListenerForSingleValueEvent(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        //Get map of users in datasnapshot
-                        //collectKeywords((Map<String,Object>) dataSnapshot.getValue());
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        //handle databaseError
-                    }
-                });
-
 
 
 
@@ -161,130 +130,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void UpdateAllFiles(){
 
-
-
-
-    }
 
 
     
 
-    private void collectKeywords(Map<String,Object> users) {
-
-        ArrayList<String> keywords = new ArrayList<>();
-        //iterate through each user, ignoring their UID
-        for (Map.Entry<String, Object> entry : users.entrySet()) {
-
-            //Get user map
-            Map singleUser = (Map) entry.getValue();
-            //Get phone field and append to list
-            keywords.add((String) singleUser.get("keyword"));
 
 
-        }
-
-        for (String keyword : keywords) {
-
-            try {
-                // GETTING stings out of file
-                String Message;
-                final FileInputStream fileinput = openFileInput(file_name);
-                InputStreamReader inputStreamReader = new InputStreamReader(fileinput);
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                StringBuffer stringBuffer = new StringBuffer();
-                while (((Message = bufferedReader.readLine()) != null)) {
-                    stringBuffer.append(Message + "\n");
-
-                }
-                final BufferedReader bufReader = new BufferedReader(new StringReader(stringBuffer.toString()));
-                String line = null;
-
-                boolean infile = false;
-                while ((line = bufReader.readLine()) != null) {
-                    if (line.equals(keyword)) {
-                        Log.d("infile", "true");
-                        infile = true;
-
-
-                    }
-
-
-                }
-                if (!infile) {
-                    try {
-                        Log.d("Adding", keyword);
-                        FileOutputStream fileoutput = openFileOutput(file_name, Context.MODE_APPEND);
-                        keyword += '\n';
-                        fileoutput.write(keyword.getBytes());
-                        fileoutput.close();
-
-
-                    } catch (FileNotFoundException e1) {
-                        e1.printStackTrace();
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
-                }
-
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                // GETTING stings out of file
-                String Message;
-                final FileInputStream fileinput = openFileInput(file_name2);
-                InputStreamReader inputStreamReader = new InputStreamReader(fileinput);
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                StringBuffer stringBuffer = new StringBuffer();
-                while (((Message = bufferedReader.readLine()) != null)) {
-                    stringBuffer.append(Message + "\n");
-
-                }
-                final BufferedReader bufReader = new BufferedReader(new StringReader(stringBuffer.toString()));
-                String line = null;
-
-                boolean infile = false;
-                while ((line = bufReader.readLine()) != null) {
-                    if (line.equals(keyword)) {
-                        Log.d("infile", "true");
-                        infile = true;
-
-
-                    }
-
-
-                }
-                if (!infile) {
-                    try {
-                        Log.d("Adding", keyword);
-                        FileOutputStream fileoutput = openFileOutput(file_name2, Context.MODE_APPEND);
-                        keyword += '\n';
-                        fileoutput.write(keyword.getBytes());
-                        fileoutput.close();
-
-
-                    } catch (FileNotFoundException e1) {
-                        e1.printStackTrace();
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
-                }
-
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-
-        }
-
-    }
 }
