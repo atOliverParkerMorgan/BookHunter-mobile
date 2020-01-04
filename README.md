@@ -12,24 +12,11 @@ there are two requirements for this app Android Studio and device with min. SDK 
 
 
 ## How does it look?
-these are some screenshots from the app:
-
-* ### main page
-#
-![main bookhunter page](https://i.imgur.com/4JqtbTq.png)
+her is a screenshots from the app:
 
 #
-* ### add keyword page
-# 
-
-![keyword bookhunter page](https://i.imgur.com/TKS9zv7.png)
-
+![main bookhunter page](https://i.imgur.com/9tjIR5D.png)
 #
-* ### add website page
-#
-
-![websites bookhunter page](https://i.imgur.com/QgrSMjI.png)
-
 
 ## Built With
 
