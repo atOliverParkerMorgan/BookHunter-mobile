@@ -19,7 +19,7 @@
         android:fullBackupContent="@xml/backup_descriptor">
 
         <activity
-            android:name=".Login.GoogleSignInActivity"
+            android:name=".Login.SignInActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" >

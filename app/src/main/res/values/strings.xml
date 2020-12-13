@@ -5,7 +5,7 @@
     <string name="keyword_bottomnav">Keywords</string>
     <string name="change_account">Change Account</string>
     <string name="about_app">About</string>
-    <string name="hunt_button">Hunt</string>
+    <string name="hunt_button">Search</string>
     <string name="test">Test</string>
     <string name="hint_website">add website</string>
     <string name="Website_title">Websites</string>
@@ -19,6 +19,9 @@
     <string name="notLogin">Not Logged in</string>
     <string name="Loading">Loading</string>
     <string name="procent">0%</string>
+    <string name="Email">Email</string>
+    <string name="Password">Password</string>
+    <string name="incorrect">incorrect email or password</string>
 
 
     <string name="desc_firebase_lockup">Firebase logo and name</string>

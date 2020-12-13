@@ -4,20 +4,6 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
-
-import androidx.annotation.NonNull;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -47,9 +33,6 @@ public class AlarmReceiver extends BroadcastReceiver {
     //number of found items
     private int alertnum;
 
-    //user + database
-    private FirebaseUser user;
-    private FirebaseFirestore db;
 
 
     @Override
@@ -59,17 +42,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         Random rand = new Random();
         // Obtain a number between [0 - 49].
         final int id = rand.nextInt(999999999);
-
-        //get all the websites from the file
-        //getting data from database
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        db = FirebaseFirestore.getInstance();
-        Log.d("USer",user.getUid());
-
-
-
-
-
 
 
         final Thread downloadThread = new Thread() {
@@ -147,41 +119,6 @@ public class AlarmReceiver extends BroadcastReceiver {
             }
 
         };
-        DocumentReference docRef = db.collection("users").document(user.getUid());
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        List<String> AllDATA = (List<String>) document.get("keywords");
-                        assert AllDATA != null;
-                        Log.d("ALLDATA",AllDATA.toString());
-                        keywords.addAll(AllDATA);
-
-                        AllDATA = (List<String>) document.get("websites");
-
-                        assert AllDATA != null;
-                        url.addAll(AllDATA);
-                        Log.d("WEBSITES",url.toString());
-                        Log.d("KEYWORD",keywords.toString());
-                        Log.d("finds",finds.toString());
-                        downloadThread.start();
-                        try {
-                            downloadThread.join();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
-                    }else{
-                        Log.d("Error","ERROR");
-                    }
-                }else{
-                    Log.d("Error","ERROR");
-                }
-            }
-        });
-
 
 
         //init alert
@@ -194,80 +131,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         //getting allfinds from database
         final StringBuffer Alltext = new StringBuffer();
 
-        docRef = db.collection("users").document(user.getUid());
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    assert document != null;
-                    if (document.exists()) {
-                        List<String> AllDATA = (List<String>) document.get("finds");
-                        Log.d("HERE","HERE");
-                        assert AllDATA != null;
-                        for(String data: AllDATA){
-                            Alltext.append(data);
-                        }
-
-                        //check if the file is new or not
-                        alert = new StringBuilder();
-                        try {
-                            for (String element : finds) {
-
-                                if (!Alltext.toString().toLowerCase().contains(element.toLowerCase())) {
-                                    // add element to find file since it isn't new anymore
-                                    db.collection("users").document(user.getUid()).update("finds", FieldValue.arrayUnion(element));
-                                    db.collection("users").document(user.getUid()).update("show", FieldValue.arrayUnion(element));
-                                    alertnum++;
-                                    //format file with no index at the end
-                                    alert.append(element.substring(0, element.indexOf("#?#"))).append('\n');
-
-
-                                }
-
-                            }
-                        }catch (java.util.ConcurrentModificationException e){
-                        e.printStackTrace();
-                        }
-                        Log.d("ALLTEXT",Alltext.toString());
-
-
-
-                        //Create notification
-
-                        Intent intent = new Intent(arg0, Show.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        PendingIntent pendingIntent = PendingIntent.getActivity(arg0, 0, intent, 0);
-                        NotificationCompat.Builder builder;
-                        Log.d("Alarmnum",Integer.toString(alertnum));
-                        if (alertnum > 0) {
-                            builder = new NotificationCompat.Builder(arg0, CHANNEL_ID)
-                                    .setSmallIcon(R.drawable.ic_check_box_black_24dp)
-
-
-                                    .setContentTitle(alertnum +" new books: ")
-
-                                    .setContentText(alert.toString())
-
-
-                                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                                    // Set the intent that will fire when the user taps the notification
-                                    .setContentIntent(pendingIntent)
-                                    .setAutoCancel(true);
-
-                            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(arg0);
-
-                            // notificationId is a unique int for each notification that you must define
-                            notificationManager.notify(id, builder.build());
-
-
-                        }
-
-                    }
-
-                }
-            }
-        });
 
     }
 }

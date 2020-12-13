@@ -13,10 +13,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -66,26 +62,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
         viewHolder.txtViewTitle.setText(itemsData.get(position).getTitle());
         viewHolder.imgViewIcon.setImageResource(itemsData.get(position).getImageUrl());
-        viewHolder.imgViewIcon.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-               // ListsDatabaseList theRemovedItem = itemsData.get(position);
-                // remove your item from data base
-                Log.d("Index",Integer.toString(position));
-                Toast.makeText(context,"removed",Toast.LENGTH_SHORT).show();
-                delete(itemsData.get(position).getTitle());
-                //get user and database instance database
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
-                // Delete the from database
-                assert user != null;
-                db.collection("users").document(user.getUid()).update("websites", FieldValue.arrayRemove(itemsData.get(position).getTitle()));
-
-                itemsData.remove(position);  // remove the item from list
-                notifyItemRemoved(position); // notify the adapter about the removed item
-
-
-            }
-        });
 
 
     }

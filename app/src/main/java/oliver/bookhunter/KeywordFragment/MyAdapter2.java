@@ -11,11 +11,6 @@ import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -70,12 +65,6 @@ public class MyAdapter2 extends RecyclerView.Adapter<MyAdapter2.ViewHolder> {
                 Log.d("Index",Integer.toString(position));
                 Toast.makeText(context,"removed",Toast.LENGTH_SHORT).show();
                 delete(itemsData.get(position).getTitle());
-
-                //get user and database instance database
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
-                // Delete the from database
-                db.collection("users").document(user.getUid()).update("keywords", FieldValue.arrayRemove(itemsData.get(position).getTitle()));
 
                 itemsData.remove(position);  // remove the item from list
                 notifyItemRemoved(position); // notify the adapter about the removed item
