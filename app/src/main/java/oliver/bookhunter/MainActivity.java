@@ -10,7 +10,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.Serializable;
 
-import oliver.bookhunter.FindsFragment.FindsFragment;
+import oliver.bookhunter.Home.HomeFragment;
 import oliver.bookhunter.KeywordFragment.KeywordFragment;
 import oliver.bookhunter.Website.WebsiteFragment;
 
@@ -25,14 +25,14 @@ public class MainActivity extends AppCompatActivity {
         //I added this if statement to keep the selected fragment when rotating the device
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.HostFragment,
-                    new FindsFragment()).commit();
+                    new HomeFragment()).commit();
         }
         Serializable fragment = getIntent().getSerializableExtra("Fragment");
         if(fragment!=null) {
             if ("Search".equals(fragment)) {
                 navView.setSelectedItemId(R.id.navigation_home);
                 getSupportFragmentManager().beginTransaction().replace(R.id.HostFragment,
-                        new FindsFragment()).commit();
+                        new HomeFragment()).commit();
             } else if ("Website".equals(fragment)) {
                 navView.setSelectedItemId(R.id.navigation_website);
                 getSupportFragmentManager().beginTransaction().replace(R.id.HostFragment,
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
                 Fragment selectedFragment = null;
                 switch (menuItem.getItemId()){
                     case R.id.navigation_home:
-                        selectedFragment = new FindsFragment();
+                        selectedFragment = new HomeFragment();
                         break;
                     case R.id.navigation_website:
                         selectedFragment = new WebsiteFragment();
