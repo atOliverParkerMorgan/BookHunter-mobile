@@ -1,7 +1,7 @@
 package oliver.bookhunter;
 
 import android.os.Bundle;
-import android.util.Log;
+
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         //I added this if statement to keep the selected fragment when rotating the device
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.HostFragment,
-                    new WebsiteFragment()).commit();
+                    new FindsFragment()).commit();
         }
         Serializable fragment = getIntent().getSerializableExtra("Fragment");
         if(fragment!=null) {

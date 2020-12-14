@@ -2,10 +2,12 @@ package oliver.bookhunter.Connect;
 
 import android.content.Context;
 
-import org.json.JSONException;
+import androidx.recyclerview.widget.RecyclerView;
+
 import org.json.JSONObject;
 
 public interface ConnectAction {
 
-    void login(JSONObject result,Context context);
+    void action(JSONObject result, Context context);
+
 }

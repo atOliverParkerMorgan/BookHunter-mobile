@@ -12,8 +12,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.regex.Pattern;
 
-import oliver.bookhunter.Login.SignInActivity;
 import oliver.bookhunter.R;
 
 public class Connect extends AsyncTask<String,String,JSONObject>{
@@ -22,17 +22,19 @@ public class Connect extends AsyncTask<String,String,JSONObject>{
     private Context context;
     private ConnectAction login;
     private String action;
+    private String actionEnd;
 
     // only retain a weak reference to the activity
-    public Connect(SignInActivity context, ConnectAction login, String action) {
+    public Connect(Context context, ConnectAction login, String action, String actionEnd) {
         this.context = context;
         this.login = login;
         this.action = action;
+        this.actionEnd = actionEnd;
     }
 
     @Override
     protected JSONObject doInBackground(String... input) {
-        return oliver.bookhunter.Connect.Connect.connect(input[0], input[1], "https://www.morganbooks.eu/api/"+action+"/", "");
+        return oliver.bookhunter.Connect.Connect.connect(input[0], input[1], "https://www.morganbooks.eu/api/"+action+"/", actionEnd);
 
     }
 
@@ -41,7 +43,7 @@ public class Connect extends AsyncTask<String,String,JSONObject>{
     @Override
     public void onPostExecute(JSONObject result){
         Log.d("RESULT", String.valueOf(result));
-        login.login(result, context);
+        login.action(result,context);
     };
 
 
@@ -72,12 +74,14 @@ public class Connect extends AsyncTask<String,String,JSONObject>{
             in.close();
 
             if (response.toString().equals("[]")){
+                Log.d("ERROR","EEJFS");
                 return null;
             }
 
 
             if((response.toString().charAt(0)=='[' && urlEnd.length()==0 )|| urlBegin.contains("Find")){
                 int index = 0;
+                Log.d("RESPP", String.valueOf(response));
                 while (response.toString().contains("website")){
                     response.replace(response.indexOf("website"),response.indexOf("website")+7, "Website"+index);
                     index++;
@@ -93,8 +97,8 @@ public class Connect extends AsyncTask<String,String,JSONObject>{
                     index++;
                 }
                 response.substring(2,response.toString().length()-2);
-                String r = response.toString().replaceAll("\\{",
-                        "").replaceAll("}","");
+                String r = response.toString().replaceAll(Pattern.quote("{"),
+                        "").replaceAll(Pattern.quote("}"),"");
 
 
                 return new JSONObject("{"+r.substring(1,r.length()-1)+"}");
@@ -103,7 +107,8 @@ public class Connect extends AsyncTask<String,String,JSONObject>{
 
 
 
-        }catch (Exception e){
+        }catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
