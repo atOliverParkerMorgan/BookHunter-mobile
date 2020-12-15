@@ -1,14 +1,15 @@
-package oliver.bookhunter.Home;
+ package oliver.bookhunter.Home;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.SearchView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -30,20 +31,24 @@ import oliver.bookhunter.Connect.ConnectAction;
 import oliver.bookhunter.R;
 
 public class HomeFragment extends Fragment {
-    public static List<String> allWebsites;
+    public static  List<String> allWebsites;
+    static float p = 0;
 
-
-
+    @SuppressLint({"UseCompatLoadingForDrawables", "ResourceAsColor"})
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         Button search = view.findViewById(R.id.Hunt);
         RecyclerView recyclerView = view.findViewById(R.id.RecyclerViewHome);
+        List<Item> find = new ArrayList<>();
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(llm);
         ProgressBar progressBar = view.findViewById(R.id.progressBar);
-        ConnectAction runnable = (result, context) -> {
+        ProgressBar progressBarSearch = view.findViewById(R.id.progressBarSearch);
+
+        ConnectAction runnable1 = (result, context) -> {
+
             List<String> allWebsites = new ArrayList<>();
 
             Iterator<String> keys;
@@ -53,23 +58,56 @@ public class HomeFragment extends Fragment {
                     try {
                         allWebsites.add((String) result.get(keys.next()));
                     } catch (JSONException e) {
-                        Toast.makeText(context,"Oops something went wrong",Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "Oops something went wrong", Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
                 }
-                HomeFragment.allWebsites = allWebsites;
-
-
-
 
             }
+            progressBarSearch.setVisibility(View.INVISIBLE);
+            search.setVisibility(View.VISIBLE);
+            HomeFragment.allWebsites = allWebsites;
         };
         SharedPreferences userPreferences = Objects.requireNonNull(Objects.requireNonNull(getContext()).getSharedPreferences("credentials", android.content.Context.MODE_PRIVATE));
 
-        search.setOnClickListener(v -> {
+        ConnectAction runnable2 = (result2, context2) -> {
+                Iterator<String> keys2;
+                if (result2 != null) {
+                    keys2 = result2.keys();
+                    while (keys2.hasNext()) {
+                        try {
+                            find.add((new Item((String) result2.get(keys2.next()))));
+                        } catch (JSONException e) {
+                            Toast.makeText(context2, "Oops something went wrong", Toast.LENGTH_LONG).show();
+                            e.printStackTrace();
+                        }
+                    }
 
+                }
+
+
+                    p++;
+                    int progress = (int) ((p/allWebsites.size())*100);
+                    progressBar.setProgress(progress);
+                    recyclerView.setAdapter(new Adapter(find));
+                    if(p==allWebsites.size()){
+                        search.setVisibility(View.VISIBLE);
+                        progressBarSearch.setVisibility(View.INVISIBLE);
+                    }
+        };
+
+        search.setOnClickListener(v -> {
+            if (allWebsites!=null) {
+                progressBarSearch.setVisibility(View.VISIBLE);
+                search.setVisibility(View.INVISIBLE);
+                for(String s: allWebsites){
+                    new Connect(getContext(), runnable2,"find",s.replace("\\","~")).execute(userPreferences.getString("user", ""), userPreferences.getString("password", ""));
+                }
+            }else{
+                Toast.makeText(getContext(),"Wait until the loading process is finished",Toast.LENGTH_LONG).show();
+            }
         });
-        new Connect(getContext(), runnable,"getAllWebsites","").execute(userPreferences.getString("user", ""), userPreferences.getString("password", ""));
+        new Connect(getContext(), runnable1,"getAllWebsites","").execute(userPreferences.getString("user", ""), userPreferences.getString("password", ""));
 
 
 

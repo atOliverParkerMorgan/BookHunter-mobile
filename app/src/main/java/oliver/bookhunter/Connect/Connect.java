@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -54,7 +55,7 @@ public class Connect extends AsyncTask<String,String,JSONObject>{
         String userEncoded = encode(user,2);
         String passwordEncoded = encode(password,2);
         String url;
-        if(urlEnd.length()!=0) url = urlBegin+userEncoded.replace('/',(char) 0)+"/"+passwordEncoded.replace('/',(char) 0)+'/'+urlEnd.replace('/','\\');
+        if(urlEnd.length()!=0) url = urlBegin+userEncoded.replace('/',(char) 0)+"/"+passwordEncoded.replace('/',(char) 0)+'/'+urlEnd.replace('/','~');
         else url = urlBegin+userEncoded.replace('/',(char) 0)+"/"+passwordEncoded.replace('/',(char) 0);
         try {
             URL obj = new URL(url);

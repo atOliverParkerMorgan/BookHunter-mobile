@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import oliver.bookhunter.Connect.Connect;
 import oliver.bookhunter.R;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>{
@@ -47,13 +48,13 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>{
         }else {
 
             holder.textView.setText(Items.get(position).getItemName());
-            holder.imageButton.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    // logic
-                    notifyItemRangeChanged(position-1, Items.size());
+            holder.imageButton.setOnClickListener(v -> {
+                // logic
+                Items.remove(Items.get(position));
+                //new Connect(getContext(), runnable,"getFindWebsites",query).execute(userPreferences.getString("user", ""), userPreferences.getString("password", ""));
+                notifyItemRangeChanged(position-1, Items.size());
 
 
-                }
             });
         }
     }
