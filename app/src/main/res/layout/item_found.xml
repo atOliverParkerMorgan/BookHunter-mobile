@@ -14,25 +14,26 @@
 
     <TextView
         android:id="@+id/name"
-        android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:layout_centerVertical="true"
+        android:layout_width="291dp"
+        android:layout_height="47dp"
 
 
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="319dp"
-        android:layout_marginRight="319dp"
-        android:layout_toStartOf="@+id/mark"
-        android:layout_toLeftOf="@+id/mark"
+        android:layout_centerInParent="true"
+        android:layout_marginEnd="6dp"
+        android:layout_marginRight="6dp"
+
+        android:layout_toStartOf="@+id/button"
+        android:layout_toLeftOf="@+id/button"
         android:gravity="start|center_vertical"
         android:paddingStart="0dp"
         android:paddingEnd="0dp"
         android:textAlignment="gravity"
         android:textColor="@color/white"
-        android:textSize="26sp" />
+        android:textSize="18sp"
+        android:maxLines="1"/>
 
     <ImageButton
-        android:id="@+id/mark"
+        android:id="@+id/button"
         android:layout_width="64dp"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -45,7 +46,7 @@
         android:layout_marginRight="13dp"
         android:layout_marginBottom="17dp"
         android:gravity="center"
-        app:srcCompat="@drawable/ic_delete_black_24dp"
+        app:srcCompat="@drawable/ic_search_black_24dp"
         android:textSize="30sp" />
 
 </RelativeLayout>

@@ -33,6 +33,7 @@ import oliver.bookhunter.R;
 public class HomeFragment extends Fragment {
     public static  List<String> allWebsites;
     static float p = 0;
+    static String currentWebsite;
 
     @SuppressLint({"UseCompatLoadingForDrawables", "ResourceAsColor"})
     @Override
@@ -62,7 +63,6 @@ public class HomeFragment extends Fragment {
                         e.printStackTrace();
                     }
                 }
-
             }
             progressBarSearch.setVisibility(View.INVISIBLE);
             search.setVisibility(View.VISIBLE);
@@ -74,9 +74,12 @@ public class HomeFragment extends Fragment {
                 Iterator<String> keys2;
                 if (result2 != null) {
                     keys2 = result2.keys();
+
                     while (keys2.hasNext()) {
                         try {
-                            find.add((new Item((String) result2.get(keys2.next()))));
+                            String s =(String) result2.get(keys2.next());
+                            Log.d("error",s);
+                            find.add((new Item(s,currentWebsite)));
                         } catch (JSONException e) {
                             Toast.makeText(context2, "Oops something went wrong", Toast.LENGTH_LONG).show();
                             e.printStackTrace();
@@ -84,12 +87,10 @@ public class HomeFragment extends Fragment {
                     }
 
                 }
-
-
                     p++;
                     int progress = (int) ((p/allWebsites.size())*100);
                     progressBar.setProgress(progress);
-                    recyclerView.setAdapter(new Adapter(find));
+                    recyclerView.setAdapter(new Adapter(find, view, false, getContext(), userPreferences, "Pass"));
                     if(p==allWebsites.size()){
                         search.setVisibility(View.VISIBLE);
                         progressBarSearch.setVisibility(View.INVISIBLE);
@@ -101,6 +102,7 @@ public class HomeFragment extends Fragment {
                 progressBarSearch.setVisibility(View.VISIBLE);
                 search.setVisibility(View.INVISIBLE);
                 for(String s: allWebsites){
+                    currentWebsite = s;
                     new Connect(getContext(), runnable2,"find",s.replace("\\","~")).execute(userPreferences.getString("user", ""), userPreferences.getString("password", ""));
                 }
             }else{

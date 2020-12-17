@@ -41,7 +41,9 @@ public class SignInActivity extends AppCompatActivity {
         password.setText(userPreferences.getString("password", ""));
 
         Button login = findViewById(R.id.btn_login);
+        login.setVisibility(View.VISIBLE);
         login.setOnClickListener(v -> {
+            login.setVisibility(View.INVISIBLE);
             SharedPreferences.Editor edit = userPreferences.edit();
             edit.putString("user", user.getText().toString());
             edit.putString("password", password.getText().toString());
@@ -51,7 +53,7 @@ public class SignInActivity extends AppCompatActivity {
             progressBar.setVisibility(View.VISIBLE);
             ConnectAction runnable = (result, context) -> {
                 if(result == null){
-                    oliver.bookhunter.Connect.Connect.Alert("Error", "Oops something went wrong. Check your internet connection", context);
+                    oliver.bookhunter.Connect.Connect.Alert("Error", "Oops something went wrong. Check your internet connection", context,  android.R.drawable.ic_dialog_alert);
                     progressBar.setVisibility(View.INVISIBLE);
                 }else {
                     try {
@@ -67,10 +69,12 @@ public class SignInActivity extends AppCompatActivity {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                 password.setBackgroundTintList(colorStateList);
                             }
+                            login.setVisibility(View.VISIBLE);
                         }
                     } catch (JSONException e) {
-                        oliver.bookhunter.Connect.Connect.Alert("Error", "Oops something went wrong. Try again.", context);
+                        oliver.bookhunter.Connect.Connect.Alert("Error", "Oops something went wrong. Try again.", context,  android.R.drawable.ic_dialog_alert);
                         progressBar.setVisibility(View.INVISIBLE);
+                        login.setVisibility(View.VISIBLE);
                     }
                 }
             };

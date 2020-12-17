@@ -113,14 +113,14 @@ public class Connect extends AsyncTask<String,String,JSONObject>{
             return null;
         }
     }
-    public static void Alert(String Title, String text, Context context){
-        new AlertDialog.Builder(context)
+    public static void Alert(String Title, String text, Context context, int icon){
+        new AlertDialog.Builder(context, AlertDialog.THEME_DEVICE_DEFAULT_DARK)
                 .setTitle(Title)
                 .setMessage(text)
 
                 // A null listener allows the button to dismiss the dialog and take no further action.
                 .setNegativeButton(R.string.continue1, null)
-                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setIcon(icon)
                 .show();
     }
 

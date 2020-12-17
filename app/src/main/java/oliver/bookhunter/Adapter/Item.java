@@ -3,27 +3,22 @@ package oliver.bookhunter.Adapter;
 import android.util.Log;
 
 public class Item {
-    private String itemName;
-    private String showItem;
+        private String itemName;
+        private String websiteName;
+        private boolean isInBag;
 
-    public Item(String itemName) {
-        Log.d("SHOW: ",itemName);
-        this.itemName = itemName;
-        this.showItem = itemName.replace("https://","");
-        this.showItem = showItem.replace("http://","");
-        this.showItem = showItem.length()>25?showItem.substring(0,25)+"...":showItem;
-        Log.d("SHOW2: ",showItem);
+        public Item(String itemName, String websiteName) {
+            this.websiteName = websiteName;
+            this.itemName = itemName;
+        }
+
+        public String getWebsiteName() {
+            return "   "+websiteName;
+        }
+
+        public String getItemName() {
+            return "   "+itemName;
+        }
+
+
     }
-
-
-    public String getItemName() {
-
-        return "   "+showItem;
-    }
-
-    public String getValue(){
-        return itemName;
-    }
-
-
-}

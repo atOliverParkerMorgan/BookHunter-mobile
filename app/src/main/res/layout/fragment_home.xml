@@ -69,11 +69,13 @@
     <ProgressBar
         android:id="@+id/progressBarSearch"
         style="?android:attr/progressBarStyle"
+        android:indeterminateTint="@color/colorPrimaryDark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@+id/progressBar"
         app:layout_constraintEnd_toEndOf="@+id/Hunt"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/Hunt" />
+        app:layout_constraintTop_toTopOf="@+id/Hunt"
+        tools:targetApi="lollipop" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
