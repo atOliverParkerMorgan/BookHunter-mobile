@@ -1,6 +1,5 @@
 package oliver.bookhunter.Login;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
@@ -13,10 +12,8 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.Objects;
 
@@ -55,6 +52,7 @@ public class SignInActivity extends AppCompatActivity {
                 if(result == null){
                     oliver.bookhunter.Connect.Connect.Alert("Error", "Oops something went wrong. Check your internet connection", context,  android.R.drawable.ic_dialog_alert);
                     progressBar.setVisibility(View.INVISIBLE);
+                    login.setVisibility(View.VISIBLE);
                 }else {
                     try {
                         if (result.get("success").equals("true")) {

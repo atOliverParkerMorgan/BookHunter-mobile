@@ -44,6 +44,7 @@ public class KeywordFragment extends Fragment {
         SharedPreferences userPreferences = Objects.requireNonNull(Objects.requireNonNull(getContext()).getSharedPreferences("credentials", android.content.Context.MODE_PRIVATE));
         RecyclerView recyclerView = view.findViewById(R.id.RecyclerViewKeyWords);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
         ProgressBar progressBar = view.findViewById(R.id.progressBar);
         EditText editText = view.findViewById(R.id.keyword_new);
@@ -80,13 +81,12 @@ public class KeywordFragment extends Fragment {
 
         ConnectAction runnable = (result, context) -> {
             List<Item> allWebsites = new ArrayList<>();
-            adapter = new Adapter(allWebsites,view, false, context, userPreferences, "Keyword");
+            adapter = new Adapter(allWebsites,false, context, userPreferences, "Keyword");
             recyclerView.setAdapter(adapter);
             Iterator<String> keys;
             if (result != null) {
                 keys = result.keys();
 
-                int index = 1;
                 while (keys.hasNext()) {
                     try {
                         String s = (String) result.get(keys.next());
@@ -95,11 +95,11 @@ public class KeywordFragment extends Fragment {
                         Toast.makeText(context,"Oops something went wrong",Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
-                    index++;
+
                 }
                 progressBar.setVisibility(View.INVISIBLE);
                 submit.setVisibility(View.VISIBLE);
-                adapter = new Adapter(allWebsites,view, false, context, userPreferences, "Keyword");
+                adapter = new Adapter(allWebsites,false, context, userPreferences, "Keyword");
                 recyclerView.setAdapter(adapter);
 
 
@@ -109,9 +109,7 @@ public class KeywordFragment extends Fragment {
 
         TextView textView = view.findViewById(R.id.Title);
         SearchView searchView = view.findViewById(R.id.searchView);
-        searchView.setOnSearchClickListener(v -> {
-            textView.setVisibility(View.INVISIBLE);
-        });
+        searchView.setOnSearchClickListener(v -> textView.setVisibility(View.INVISIBLE));
         searchView.setOnCloseListener(() -> {
             textView.setVisibility(View.VISIBLE);
             new Connect(getContext(), runnable,"getAllKeywords","").execute(userPreferences.getString("user", ""), userPreferences.getString("password", ""));

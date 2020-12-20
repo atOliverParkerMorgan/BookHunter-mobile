@@ -1,5 +1,6 @@
 package oliver.bookhunter;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 
@@ -10,6 +11,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.Serializable;
 
+import oliver.bookhunter.FoundHistory.FoundHistory;
 import oliver.bookhunter.Home.HomeFragment;
 import oliver.bookhunter.KeywordFragment.KeywordFragment;
 import oliver.bookhunter.Website.WebsiteFragment;
@@ -41,12 +43,17 @@ public class MainActivity extends AppCompatActivity {
                 navView.setSelectedItemId(R.id.navigation_keywords);
                 getSupportFragmentManager().beginTransaction().replace(R.id.HostFragment,
                         new KeywordFragment()).commit();
+            }else if ("History".equals(fragment)) {
+                navView.setSelectedItemId(R.id.navigation_keywords);
+                getSupportFragmentManager().beginTransaction().replace(R.id.HostFragment,
+                        new FoundHistory()).commit();
             }
         }
 
 
     }
     // navigation
+    @SuppressLint("NonConstantResourceId")
     public BottomNavigationView.OnNavigationItemSelectedListener navListener =
             menuItem -> {
 
@@ -60,6 +67,10 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.navigation_keywords:
                         selectedFragment = new KeywordFragment();
+                        break;
+
+                    case R.id.navigation_history:
+                        selectedFragment = new FoundHistory();
                         break;
                 }
 

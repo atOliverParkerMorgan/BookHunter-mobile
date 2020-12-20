@@ -4,8 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.Toast;
+
 
 import org.json.JSONObject;
 
@@ -20,10 +19,10 @@ import oliver.bookhunter.R;
 public class Connect extends AsyncTask<String,String,JSONObject>{
 
     @SuppressLint("StaticFieldLeak")
-    private Context context;
-    private ConnectAction login;
-    private String action;
-    private String actionEnd;
+    private final Context context;
+    private final ConnectAction login;
+    private final String action;
+    private final String actionEnd;
 
     // only retain a weak reference to the activity
     public Connect(Context context, ConnectAction login, String action, String actionEnd) {
@@ -43,15 +42,12 @@ public class Connect extends AsyncTask<String,String,JSONObject>{
 
     @Override
     public void onPostExecute(JSONObject result){
-        Log.d("RESULT", String.valueOf(result));
         login.action(result,context);
-    };
-
+    }
 
 
     public static JSONObject connect(String user, String password, String urlBegin, String urlEnd) {
-        Log.d("USER",user);
-        Log.d("passwrod",password);
+
         String userEncoded = encode(user,2);
         String passwordEncoded = encode(password,2);
         String url;
@@ -75,14 +71,12 @@ public class Connect extends AsyncTask<String,String,JSONObject>{
             in.close();
 
             if (response.toString().equals("[]")){
-                Log.d("ERROR","EEJFS");
                 return null;
             }
 
 
             if((response.toString().charAt(0)=='[' && urlEnd.length()==0 )|| urlBegin.contains("Find")){
                 int index = 0;
-                Log.d("RESPP", String.valueOf(response));
                 while (response.toString().contains("website")){
                     response.replace(response.indexOf("website"),response.indexOf("website")+7, "Website"+index);
                     index++;

@@ -14,7 +14,7 @@
     <string name="Email">Email</string>
     <string name="Password">Password</string>
     <string name="incorrect">incorrect email or password</string>
-
+    <string name="history">History</string>
 
     <string name="continue1">continue</string>
     <string name="restart">restart app</string>

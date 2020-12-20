@@ -2,9 +2,7 @@
 
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +42,7 @@ public class HomeFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.RecyclerViewHome);
         List<Item> find = new ArrayList<>();
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
         ProgressBar progressBar = view.findViewById(R.id.progressBar);
         ProgressBar progressBarSearch = view.findViewById(R.id.progressBarSearch);
@@ -60,7 +59,7 @@ public class HomeFragment extends Fragment {
                         allWebsites.add((String) result.get(keys.next()));
                     } catch (JSONException e) {
                         Toast.makeText(context, "Oops something went wrong", Toast.LENGTH_LONG).show();
-                        e.printStackTrace();
+
                     }
                 }
             }
@@ -74,11 +73,11 @@ public class HomeFragment extends Fragment {
                 Iterator<String> keys2;
                 if (result2 != null) {
                     keys2 = result2.keys();
+                    if(keys2.hasNext()) find.add((new Item(null, currentWebsite)));
 
                     while (keys2.hasNext()) {
                         try {
                             String s =(String) result2.get(keys2.next());
-                            Log.d("error",s);
                             find.add((new Item(s,currentWebsite)));
                         } catch (JSONException e) {
                             Toast.makeText(context2, "Oops something went wrong", Toast.LENGTH_LONG).show();
@@ -90,10 +89,12 @@ public class HomeFragment extends Fragment {
                     p++;
                     int progress = (int) ((p/allWebsites.size())*100);
                     progressBar.setProgress(progress);
-                    recyclerView.setAdapter(new Adapter(find, view, false, getContext(), userPreferences, "Pass"));
+                    recyclerView.setAdapter(new Adapter(find, true, getContext(), userPreferences, "Pass"));
                     if(p==allWebsites.size()){
                         search.setVisibility(View.VISIBLE);
                         progressBarSearch.setVisibility(View.INVISIBLE);
+                        Connect.Alert("Success","The search has finished", getContext(), android.R.drawable.ic_menu_add);
+
                     }
         };
 
