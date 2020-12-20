@@ -127,7 +127,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>{
         }
     }
     private void goToUrl (String url) {
-        Uri uriUrl = Uri.parse(url.substring(3));
+        Uri uriUrl = Uri.parse(url);
         Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
         context.startActivity(launchBrowser);
     }
