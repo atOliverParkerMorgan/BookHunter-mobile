@@ -77,7 +77,7 @@ public class SignInActivity extends AppCompatActivity {
                 }
             };
 
-            new oliver.bookhunter.Connect.Connect(this, runnable,"login","").execute(user.getText().toString(), password.getText().toString());
+            new oliver.bookhunter.Connect.Connect(this, runnable,null,"login","").execute(user.getText().toString(), password.getText().toString());
 
 
 

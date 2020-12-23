@@ -26,17 +26,19 @@ import oliver.bookhunter.Adapter.Adapter;
 import oliver.bookhunter.Adapter.Item;
 import oliver.bookhunter.Connect.Connect;
 import oliver.bookhunter.Connect.ConnectAction;
+import oliver.bookhunter.Connect.ConnectActionWebsite;
 import oliver.bookhunter.R;
 
 public class HomeFragment extends Fragment {
     public static  List<String> allWebsites;
     static float p = 0;
-    static String currentWebsite;
+
 
     @SuppressLint({"UseCompatLoadingForDrawables", "ResourceAsColor"})
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        p = 0;
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         Button search = view.findViewById(R.id.Hunt);
         RecyclerView recyclerView = view.findViewById(R.id.RecyclerViewHome);
@@ -69,18 +71,18 @@ public class HomeFragment extends Fragment {
         };
         SharedPreferences userPreferences = Objects.requireNonNull(Objects.requireNonNull(getContext()).getSharedPreferences("credentials", android.content.Context.MODE_PRIVATE));
 
-        ConnectAction runnable2 = (result2, context2) -> {
+        ConnectActionWebsite runnable2 = (result2, context2, website) -> {
                 Iterator<String> keys2;
                 if (result2 != null) {
                     keys2 = result2.keys();
-                    if(keys2.hasNext()) find.add((new Item(null, currentWebsite)));
+                    if(keys2.hasNext()) find.add((new Item(null, website)));
 
                     while (keys2.hasNext()) {
                         try {
                             String s =(String) result2.get(keys2.next());
-                            find.add((new Item(s,currentWebsite)));
+                            find.add((new Item(s,website)));
                         } catch (JSONException e) {
-                            Toast.makeText(context2, "Oops something went wrong", Toast.LENGTH_LONG).show();
+                            Connect.Alert("Error","The website: "+website+" is invalid", getContext(), android.R.drawable.ic_dialog_alert);
                             e.printStackTrace();
                         }
                     }
@@ -89,11 +91,12 @@ public class HomeFragment extends Fragment {
                     p++;
                     int progress = (int) ((p/allWebsites.size())*100);
                     progressBar.setProgress(progress);
-                    recyclerView.setAdapter(new Adapter(find, true, getContext(), userPreferences, "Pass"));
+                    recyclerView.setAdapter(new Adapter(find, true, getContext(), userPreferences, "Pass", view));
                     if(p==allWebsites.size()){
                         search.setVisibility(View.VISIBLE);
                         progressBarSearch.setVisibility(View.INVISIBLE);
                         Connect.Alert("Success","The search has finished", getContext(), android.R.drawable.ic_menu_add);
+                        progressBar.setProgress(0);
 
                     }
         };
@@ -103,14 +106,13 @@ public class HomeFragment extends Fragment {
                 progressBarSearch.setVisibility(View.VISIBLE);
                 search.setVisibility(View.INVISIBLE);
                 for(String s: allWebsites){
-                    currentWebsite = s;
-                    new Connect(getContext(), runnable2,"find",s.replace("\\","~")).execute(userPreferences.getString("user", ""), userPreferences.getString("password", ""));
+                    new Connect(getContext(), null, runnable2,"find",s.replace("\\","~")).execute(userPreferences.getString("user", ""), userPreferences.getString("password", ""));
                 }
             }else{
                 Toast.makeText(getContext(),"Wait until the loading process is finished",Toast.LENGTH_LONG).show();
             }
         });
-        new Connect(getContext(), runnable1,"getAllWebsites","").execute(userPreferences.getString("user", ""), userPreferences.getString("password", ""));
+        new Connect(getContext(), runnable1, null,"getAllWebsites","").execute(userPreferences.getString("user", ""), userPreferences.getString("password", ""));
 
 
 

@@ -2,6 +2,7 @@ package oliver.bookhunter.Website;
 
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -36,6 +37,7 @@ public class WebsiteFragment extends Fragment {
 
     @SuppressLint("StaticFieldLeak")
     private static Adapter adapter;
+    public static ConnectAction runnable;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -59,8 +61,7 @@ public class WebsiteFragment extends Fragment {
                         if(result.getString("success").equals("true")){
                             submit.setVisibility(View.VISIBLE);
                             progressBar.setVisibility(View.INVISIBLE);
-                            adapter.add(new Item(add, null));
-                            recyclerView.setAdapter(adapter);
+                            update(getContext(), userPreferences, view);
                             editText.setText("");
                             Connect.Alert("Success",add +" has been successfully added", context, android.R.drawable.ic_menu_add);
                         }else{
@@ -74,14 +75,14 @@ public class WebsiteFragment extends Fragment {
 
             };
 
-            new Connect(getContext(), runnable,"addWebsite",add).execute(userPreferences.getString("user", ""), userPreferences.getString("password", ""));
+            new Connect(getContext(), runnable,null,"addWebsite",add).execute(userPreferences.getString("user", ""), userPreferences.getString("password", ""));
 
         });
         submit.setVisibility(View.INVISIBLE);
 
-        ConnectAction runnable = (result, context) -> {
+        runnable = (result, context) -> {
             List<Item> allWebsites = new ArrayList<>();
-            adapter = new Adapter(allWebsites,false, context, userPreferences, "Website");
+            adapter = new Adapter(allWebsites,false, context, userPreferences, "Website", view);
             recyclerView.setAdapter(adapter);
             Iterator<String> keys;
             if (result != null) {
@@ -90,7 +91,7 @@ public class WebsiteFragment extends Fragment {
                 while (keys.hasNext()) {
                     try {
                         String s = (String) result.get(keys.next());
-                        allWebsites.add(new Item(s, null));
+                        allWebsites.add(new Item(s, "website"));
                     } catch (JSONException e) {
                         Toast.makeText(context,"Oops something went wrong",Toast.LENGTH_LONG).show();
                         e.printStackTrace();
@@ -98,7 +99,7 @@ public class WebsiteFragment extends Fragment {
                 }
                 progressBar.setVisibility(View.INVISIBLE);
                 submit.setVisibility(View.VISIBLE);
-                adapter = new Adapter(allWebsites,false, context, userPreferences, "Website");
+                adapter = new Adapter(allWebsites,false, context, userPreferences, "Website",view);
                 recyclerView.setAdapter(adapter);
 
 
@@ -110,7 +111,7 @@ public class WebsiteFragment extends Fragment {
         searchView.setOnSearchClickListener(v -> textView.setVisibility(View.INVISIBLE));
         searchView.setOnCloseListener(() -> {
             textView.setVisibility(View.VISIBLE);
-            new Connect(getContext(), runnable,"getAllWebsites","").execute(userPreferences.getString("user", ""), userPreferences.getString("password", ""));
+            new Connect(getContext(), runnable,null,"getAllWebsites","").execute(userPreferences.getString("user", ""), userPreferences.getString("password", ""));
             return false;
         });
 
@@ -118,7 +119,7 @@ public class WebsiteFragment extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 progressBar.setVisibility(View.VISIBLE);
-                new Connect(getContext(), runnable,"getFindWebsites",query).execute(userPreferences.getString("user", ""), userPreferences.getString("password", ""));
+                new Connect(getContext(), runnable,null,"getFindWebsites",query).execute(userPreferences.getString("user", ""), userPreferences.getString("password", ""));
                 return false;
             }
 
@@ -129,10 +130,15 @@ public class WebsiteFragment extends Fragment {
         });
 
 
-        new Connect(getContext(), runnable,"getAllWebsites","").execute(userPreferences.getString("user", ""), userPreferences.getString("password", ""));
-
+        update(getContext(), userPreferences, view);
 
         return view;
+    }
+
+    public static void update(Context context, SharedPreferences userPreferences, View view){
+        ProgressBar progressBar = view.findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
+        new Connect(context, runnable,null,"getAllWebsites","").execute(userPreferences.getString("user", ""), userPreferences.getString("password", ""));
     }
 
 

@@ -72,11 +72,11 @@ public class FoundHistory extends Fragment {
 
             }
 
-            recycler.setAdapter(new Adapter(found,true, getContext(), userPreferences, "Pass"));
+            recycler.setAdapter(new Adapter(found,true, getContext(), userPreferences, "Pass", view));
             progressBar.setVisibility(View.INVISIBLE);
 
         };
-        new Connect(getContext(), runnable,"getAllFound","").execute(userPreferences.getString("user", ""), userPreferences.getString("password", ""));
+        new Connect(getContext(), runnable,null,"getAllFound","").execute(userPreferences.getString("user", ""), userPreferences.getString("password", ""));
 
         return view;
     }

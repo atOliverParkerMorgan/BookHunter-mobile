@@ -1,6 +1,7 @@
 package oliver.bookhunter.KeywordFragment;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -35,6 +36,7 @@ import oliver.bookhunter.R;
 public class KeywordFragment extends Fragment {
     @SuppressLint("StaticFieldLeak")
     private static Adapter adapter;
+    public static ConnectAction runnable;
 
     @SuppressLint("ResourceAsColor")
     @Override
@@ -59,8 +61,7 @@ public class KeywordFragment extends Fragment {
                         if(result.getString("success").equals("true")){
                             submit.setVisibility(View.VISIBLE);
                             progressBar.setVisibility(View.INVISIBLE);
-                            adapter.add(new Item(add, null));
-                            recyclerView.setAdapter(adapter);
+                            update(getContext(), userPreferences, view);
                             editText.setText("");
                             Connect.Alert("Success",add +" has been successfully added", context, android.R.drawable.ic_menu_add);
                         }else{
@@ -74,14 +75,14 @@ public class KeywordFragment extends Fragment {
 
             };
 
-            new Connect(getContext(), runnable,"addKeyword",add).execute(userPreferences.getString("user", ""), userPreferences.getString("password", ""));
+            new Connect(getContext(), runnable,null,"addKeyword",add).execute(userPreferences.getString("user", ""), userPreferences.getString("password", ""));
 
         });
         submit.setVisibility(View.INVISIBLE);
 
-        ConnectAction runnable = (result, context) -> {
+        runnable = (result, context) -> {
             List<Item> allWebsites = new ArrayList<>();
-            adapter = new Adapter(allWebsites,false, context, userPreferences, "Keyword");
+            adapter = new Adapter(allWebsites,false, context, userPreferences, "Keyword", view);
             recyclerView.setAdapter(adapter);
             Iterator<String> keys;
             if (result != null) {
@@ -99,7 +100,7 @@ public class KeywordFragment extends Fragment {
                 }
                 progressBar.setVisibility(View.INVISIBLE);
                 submit.setVisibility(View.VISIBLE);
-                adapter = new Adapter(allWebsites,false, context, userPreferences, "Keyword");
+                adapter = new Adapter(allWebsites,false, context, userPreferences, "Keyword", view);
                 recyclerView.setAdapter(adapter);
 
 
@@ -112,7 +113,7 @@ public class KeywordFragment extends Fragment {
         searchView.setOnSearchClickListener(v -> textView.setVisibility(View.INVISIBLE));
         searchView.setOnCloseListener(() -> {
             textView.setVisibility(View.VISIBLE);
-            new Connect(getContext(), runnable,"getAllKeywords","").execute(userPreferences.getString("user", ""), userPreferences.getString("password", ""));
+            new Connect(getContext(), runnable,null,"getAllKeywords","").execute(userPreferences.getString("user", ""), userPreferences.getString("password", ""));
 
             return false;
         });
@@ -121,7 +122,7 @@ public class KeywordFragment extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 progressBar.setVisibility(View.VISIBLE);
-                new Connect(getContext(), runnable,"getFindKeywords",query).execute(userPreferences.getString("user", ""), userPreferences.getString("password", ""));
+                new Connect(getContext(), runnable,null,"getFindKeywords",query).execute(userPreferences.getString("user", ""), userPreferences.getString("password", ""));
 
                 return false;
             }
@@ -132,9 +133,15 @@ public class KeywordFragment extends Fragment {
             }
         });
 
-        new Connect(getContext(), runnable,"getAllKeywords","").execute(userPreferences.getString("user", ""), userPreferences.getString("password", ""));
-
+        update(getContext(), userPreferences, view);
 
         return view;
     }
+
+    public static void update(Context context, SharedPreferences userPreferences, View view){
+        ProgressBar progressBar = view.findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
+        new Connect(context, runnable,null,"getAllKeywords","").execute(userPreferences.getString("user", ""), userPreferences.getString("password", ""));
+    }
+
 }

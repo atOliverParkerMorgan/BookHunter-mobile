@@ -21,16 +21,21 @@ public class Connect extends AsyncTask<String,String,JSONObject>{
     @SuppressLint("StaticFieldLeak")
     private final Context context;
     private final ConnectAction login;
+    private final ConnectActionWebsite loginWithWebsite;
     private final String action;
     private final String actionEnd;
 
     // only retain a weak reference to the activity
-    public Connect(Context context, ConnectAction login, String action, String actionEnd) {
+    public Connect(Context context, ConnectAction login,ConnectActionWebsite login2, String action, String actionEnd) {
         this.context = context;
         this.login = login;
+        this.loginWithWebsite = login2;
         this.action = action;
         this.actionEnd = actionEnd;
+
     }
+
+
 
     @Override
     protected JSONObject doInBackground(String... input) {
@@ -42,7 +47,11 @@ public class Connect extends AsyncTask<String,String,JSONObject>{
 
     @Override
     public void onPostExecute(JSONObject result){
-        login.action(result,context);
+        if(login==null){
+            loginWithWebsite.action(result, context, actionEnd.replace("~","/"));
+        }else {
+            login.action(result, context);
+        }
     }
 
 
