@@ -26,7 +26,7 @@ her is a screenshots from the app:
 
 * [Firebase](https://firebase.google.com/) - The backend for user Auth and database
 * [Jsoup](https://jsoup.org//) - The library that the app uses to get the content of a webpage
-* REST-API using the website morganbooks.com
+* REST-API using the website morganbooks.eu
 
 
 ## Author
