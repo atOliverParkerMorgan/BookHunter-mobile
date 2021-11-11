@@ -1,6 +1,10 @@
-# BookHunter-mobile
-this app looks at a given list of webpages for keywords and returns all the text on these webpages that 
+<h1 align="center">BookHunter-mobile</h1>
+<div align="center">
+This app looks at a given list of webpages for keywords and returns all the text on these webpages that 
 contain these key words that were found
+</div>
+<br>
+<br>
 
 ## For what can use this?
 you can use this app to looking for new products on a webpage all you need to do is:
@@ -22,7 +26,7 @@ her is a screenshots from the app:
 
 * [Firebase](https://firebase.google.com/) - The backend for user Auth and database
 * [Jsoup](https://jsoup.org//) - The library that the app uses to get the content of a webpage
-
+* REST-API using the website morganbooks
 
 
 ## Author
