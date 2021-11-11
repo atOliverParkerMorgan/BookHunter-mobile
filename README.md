@@ -49,3 +49,6 @@ Please make sure that you have a steady internet connection!
 * ### how to work with a alarm and notifications
 * ### how to work with spinner
 * ### how to check if a webpage exist or not
+
+## Current state
+Aplication is in production: https://play.google.com/store/apps/details?id=oliver.bookhunter&hl=cs (make sure you are logged into google store so the link can work)
