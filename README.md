@@ -11,12 +11,17 @@ you can use this app to looking for new products on a webpage all you need to do
 * suply the app with a list of webpages
 * suply the app with a list of keywords (The app will look if the webpages contain these keywords)
 
+<br>
+
 ## Getting Started
 there are two requirements for this app Android Studio and device with min. SDK version 14 (or emulator)
 
+<br>
 
 ## How does it look?
-her is a screenshots from the app:
+here is a screenshots from the app:
+
+<br>
 
 #
 ![main bookhunter page](https://i.imgur.com/9tjIR5D.png)
@@ -28,14 +33,19 @@ her is a screenshots from the app:
 * [Jsoup](https://jsoup.org//) - The library that the app uses to get the content of a webpage
 * REST-API using the website morganbooks.eu
 
+<br>
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
+<br>
+
 ## Acknowledgments
 
 Please make sure that you have a steady internet connection!
+
+<br>
 
 ## What did I learn? 
 * ### how to work with jsoup
@@ -45,6 +55,8 @@ Please make sure that you have a steady internet connection!
 * ### how to work with a alarm and notifications
 * ### how to work with spinner
 * ### how to check if a webpage exist or not
+
+<br>
 
 ## Current state
 Aplication is in production: https://play.google.com/store/apps/details?id=oliver.bookhunter&hl=cs (make sure you are logged into google store so the link can work)
